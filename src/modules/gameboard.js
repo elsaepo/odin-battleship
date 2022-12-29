@@ -21,7 +21,8 @@ function Gameboard(){
         if (row > 9 || col > 9) return undefined;
         else return this.board[row][col];
     }
-    function placeShip(ship, origin, alignment){
+    function placeShip(shipLength, origin, alignment){
+        const ship = Ship(shipLength);
         // Create an array of ship placement squares
         let [row, col] = origin;
         let shipSquares = [];
@@ -39,12 +40,18 @@ function Gameboard(){
                 this.board[row][col] = ship;
             })
             placedShips.push(ship);
+            return ship;
         } else return "Cannot place ship in that location";
     }
+    // Receives an attack and returns 'hit' or 'miss' depending on result
     function receiveAttack(row, col){
         if (this.checkSquare(row, col) === undefined) return "Invalid location";
         if (this.board[row][col] === null) this.board[row][col] = 'miss';
-        else this.board[row][col].hit();
+        else {
+            this.board[row][col].hit();
+            this.board[row][col] = 'hit';
+        }
+        return this.board[row][col];
     }
     function checkAllShipsSunk(){
         return placedShips.every(ship => ship.isSunk());
