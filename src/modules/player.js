@@ -1,7 +1,8 @@
 import Gameboard from "./gameboard";
 
-function Player(ai) {
-    const isAI = ai ? true : false;
+function Player(playerName) {
+    const name = typeof playerName === 'string' ? playerName : 'battleBot';
+    const isAI = typeof playerName !== 'string' ? true : false;
     const gameboard = Gameboard();
     // Create a 2D array of available attack coordinates
     const availableAttacks = createAttackArray();
@@ -22,6 +23,8 @@ function Player(ai) {
         return enemy.gameboard.receiveAttack(row, col);
     }
     return {
+        name,
+        isAI,
         gameboard,
         attack
     }

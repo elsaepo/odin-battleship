@@ -1,3 +1,33 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
-    background-color: blue;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(220,220,220);
+}
+
+#app {
+    padding: 10%;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    border: 2px solid black;
+}
+
+.board {
+    display: grid;
+    height: auto;
+    grid-template-rows: repeat(10, 40px);
+    grid-template-columns: repeat(10, 40px);
+    background-color: white;
+    gap: 2px;
+    /* border: 2px solid black; */
+}
+
+.cell {
+    background-color: grey;
+    border: 1px solid black;
 }

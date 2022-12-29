@@ -4,8 +4,8 @@ let player1;
 let ai2;
 
 beforeEach(() => {
-    player1 = Player();
-    ai2 = Player(true);
+    player1 = Player('bob');
+    ai2 = Player(false);
     player1.gameboard.placeShip(3, [0,0], 'horizontal');
     ai2.gameboard.placeShip(4, [2,4], 'vertical');
 })
