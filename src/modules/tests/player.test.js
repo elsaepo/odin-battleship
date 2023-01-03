@@ -17,18 +17,18 @@ test('player has own gameboard', () => {
 test('player1 attacks and misses', () => {
     expect(ai2.gameboard.checkSquare(9,8)).toBe(null);
     const attackedSquare = player1.attack(ai2, 9,8);
-    expect(attackedSquare).toBe('miss');
+    expect(attackedSquare[0]).toBe('miss');
 })
 
 test('player1 attacks and hits', () => {
     expect(typeof ai2.gameboard.checkSquare(3,4)).toBe('object');
     const attackedSquare = player1.attack(ai2, 3,4);
-    expect(attackedSquare).toBe('hit');
+    expect(attackedSquare[0]).toBe('hit');
 })
 
 test('ai2 makes a random attack', () => {
     const attackedSquare = ai2.attack(player1);
-    expect(typeof attackedSquare).toBe('string');
+    expect(typeof attackedSquare[0]).toBe('string');
 })
 
 test('ai2 attacks 100 times and never the same square twice', () => {

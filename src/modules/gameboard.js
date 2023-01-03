@@ -44,7 +44,8 @@ function Gameboard(){
             return ship;
         } else return "Cannot place ship in that location";
     }
-    // Receives an attack and returns 'hit' or 'miss' depending on result
+    // Receives an attack and calculates the result
+    // Returns an array - 'hit' or 'miss' depending on result, and the coordinates
     function receiveAttack(row, col){
         if (this.checkSquare(row, col) === undefined) return "Invalid location";
         if (this.board[row][col] === null) this.board[row][col] = 'miss';
@@ -52,7 +53,7 @@ function Gameboard(){
             this.board[row][col].hit();
             this.board[row][col] = 'hit';
         }
-        return this.board[row][col];
+        return [this.board[row][col], [row, col]];
     }
     function checkAllShipsSunk(){
         return placedShips.every(ship => ship.isSunk());

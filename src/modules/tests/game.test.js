@@ -17,11 +17,11 @@ test('create game with human and ai', () => {
 })
 
 test('players can both make attacks', () => {
-    expect(typeof player1.attack(ai2, 0,0)).toBe('string');
-    expect(typeof ai2.attack(player1)).toBe('string');
+    expect(typeof player1.attack(ai2, 0,0)[0]).toBe('string');
+    expect(typeof ai2.attack(player1)[0]).toBe('string');
 })
 
 test('create a test game', () => {
     game.testGame();
-    expect(typeof player1.attack(ai2, 0,3)).toBe('string');
+    expect(typeof player1.attack(ai2, 0,3)[0]).toBe('string');
 })

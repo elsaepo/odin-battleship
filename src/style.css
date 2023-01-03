@@ -24,12 +24,13 @@ body {
     height: 400px;
     grid-template-rows: repeat(10, 1fr);
     grid-template-columns: repeat(10, 1fr);
-    gap: 2px;
+    gap: 1px;
 }
 
 .cell {
+    cursor: crosshair;
     background-color: rgb(200,200,200);
-    border: 1px solid black;
+    border: 1px solid grey;
 }
 
 .cell-ship {
