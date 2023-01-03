@@ -19,7 +19,7 @@ function Gameboard(){
     function checkSquare(row, col){
         if (row < 0 || col < 0) return undefined;
         if (row > 9 || col > 9) return undefined;
-        else return this.board[row][col];
+        else return board[row][col];
     }
     function placeShip(shipLength, origin, alignment){
         const ship = Ship(shipLength);
@@ -33,6 +33,7 @@ function Gameboard(){
         // If every placement square is null, place the ship on all those squares
         if (shipSquares.every(square => {
             let [row, col] = square;
+            if (checkSquare(row, col) === undefined) return false;
             return this.board[row][col] === null;
         })) {
             shipSquares.forEach(square => {
@@ -58,6 +59,7 @@ function Gameboard(){
     }
     return {
         board,
+        placedShips,
         checkSquare,
         placeShip,
         receiveAttack,

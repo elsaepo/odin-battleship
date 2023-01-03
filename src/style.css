@@ -14,20 +14,34 @@ body {
     height: 100vh;
     display: flex;
     justify-content: space-around;
+    align-content: center;
     border: 2px solid black;
 }
 
 .board {
     display: grid;
-    height: auto;
-    grid-template-rows: repeat(10, 40px);
-    grid-template-columns: repeat(10, 40px);
-    background-color: white;
+    width: 400px;
+    height: 400px;
+    grid-template-rows: repeat(10, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+    /* background-color: green; */
     gap: 2px;
     /* border: 2px solid black; */
 }
 
 .cell {
-    background-color: grey;
+    background-color: rgb(200,200,200);
     border: 1px solid black;
+}
+
+.cell-ship {
+    background-color: blue;
+}
+
+.cell-hit {
+    background-color: red;
+}
+
+.cell-miss {
+    background-color: green;
 }

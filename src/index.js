@@ -6,4 +6,3 @@ import './modules/domController'
 // myIcon.src = Icon;
 // element.appendChild(myIcon)
 
-console.log("Hello World")
