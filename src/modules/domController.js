@@ -28,31 +28,26 @@ function drawBoard(player) {
             cell.dataset.row = row;
             cell.dataset.col = col;
             board.appendChild(cell);
-            cell.addEventListener('click', (event) => {
-                listenForAttack(event.target);
-            }, { once: true });
+            cell.addEventListener('click', listenForAttack, false);
         }
     }
     return board;
 }
 
-function listenForAttack(cell) {
+function listenForAttack(event) {
+    const cell = event.target
     const defendingPlayerNumber = cell.dataset.player;
     const attackingPlayerNumber = defendingPlayerNumber === '1' ? '2' : '1';
-    const row = cell.dataset.row;
-    const col = cell.dataset.col;
-    if (getCurrentPlayerNumber(game) !== attackingPlayerNumber) return;
     const attackingPlayer = game[`player${attackingPlayerNumber}`];
     const defendingPlayer = game[`player${defendingPlayerNumber}`];
+    if (game.currentPlayer !== attackingPlayer) return;
+    const row = cell.dataset.row;
+    const col = cell.dataset.col;
     const result = attackingPlayer.attack(defendingPlayer, row, col);
     if (result === 'hit') cell.classList.add('cell-hit');
     if (result === 'miss') cell.classList.add('cell-miss');
     game.changeTurn();
-}
-
-function getCurrentPlayerNumber(game) {
-    if (game.currentPlayer === game.player1) return '1';
-    else return '2';
+    cell.removeEventListener('click', listenForAttack, false)
 }
 
 // Draws the ships to the player's on-screen board so they can see their fleet

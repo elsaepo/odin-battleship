@@ -24,9 +24,7 @@ body {
     height: 400px;
     grid-template-rows: repeat(10, 1fr);
     grid-template-columns: repeat(10, 1fr);
-    /* background-color: green; */
     gap: 2px;
-    /* border: 2px solid black; */
 }
 
 .cell {
