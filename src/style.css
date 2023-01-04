@@ -2,6 +2,7 @@
 
 :root {
     --header-height: 100px;
+    --board-size: 320px;
 
     --background-color: rgb(240, 240, 240);
     --cell-color: rgb(230, 230, 230);
@@ -10,10 +11,8 @@
     --ship-color: rgb(150, 150, 150);
     --hit-color: rgb(206, 134, 134);
     --miss-color: rgb(161, 216, 161);
-
     --text-color-main: rgb(40, 40, 40);
     --text-color-grey: rgb(100, 100, 100);
-
     --button-color: rgb(210, 210, 210);
     --button-color-hover: rgb(230, 230, 230);
     --button-color-active: grey;
@@ -27,10 +26,8 @@
     --ship-color: rgb(153, 153, 153);
     --hit-color: rgb(155, 61, 61);
     --miss-color: rgb(52, 109, 52);
-
     --text-color-main: rgb(220, 220, 220);
     --text-color-grey: rgb(160, 160, 160);
-
     --button-color: rgb(50, 50, 50);
     --button-color-hover: rgb(20, 20, 20);
     --button-color-active: grey;
@@ -51,16 +48,26 @@ body {
 }
 
 #app {
-    padding: 0 10%;
-    width: 100vw;
+    padding: 0 5%;
+    /* width: 100vw; */
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+}
+
+h1 {
+
+}
+
+h3 {
+    margin: 0;
 }
 
 /* Header */
 header {
+    /* max-width: 100%; */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -96,24 +103,94 @@ button:active {
     }
 }
 
-
 #game-container {
+    /* display: contents; */
+    /* width: fit-content; */
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+/* Player setup */
+.setup-ships-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* padding-top: 20px; */
+    width: var(--board-size);
+    height: calc(var(--board-size) + 25px);
+    text-align: right;
+}
+
+.setup-ship-shiplist {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.setup-ship {
+    /* border: 1px solid red; */
+    height: 40px;
     display: flex;
     justify-content: space-between;
-    align-content: center;
+    align-items: center;
+}
+
+.setup-ship p {
+    margin: 0;
+    display: inline-block;
+    /* margin-right: 160px; */
+    /* text-align: right; */
+}
+
+.setup-ship-box {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.setup-ship-cell {
+width: 30px;
+height: 30px;
+background-color: var(--cell-hover-color);
+border: 1px solid black;
+}
+
+.setup-ships-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.setup-button-start, .setup-button-random {
+    width: 120px;
+    height: 36px;
+}
+
+.setup-button-start {
+    font-weight: 600;
+    font-size: 1rem;
+    background-color: rgb(235, 189, 129);
+    transition: transform 0.1s ease;
+}
+
+@media (hover: hover){
+    .setup-button-start:hover {
+        transform: scale(1.1);
+        background-color: rgb(226, 116, 116);
+    }
 }
 
 /* Player sections */
 .board-container {
-
+    display: inline-block;
 }
-
 
 /* Player boards */
 .board {
     display: grid;
-    width: 400px;
-    height: 400px;
+    width: var(--board-size);
+    height: var(--board-size);
     grid-template-rows: repeat(10, 1fr);
     grid-template-columns: repeat(10, 1fr);
     gap: 2px;

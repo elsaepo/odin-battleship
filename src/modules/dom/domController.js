@@ -21,12 +21,103 @@ game.newGame('Bob', false);
 game.testGame();
 
 const player1BoardContainer = drawBoardContainer(game.player1);
-const player2BoardContainer = drawBoardContainer(game.player2);
-gameContainer.append(player1BoardContainer, player2BoardContainer);
+// const player2BoardContainer = drawBoardContainer(game.player2);
+// gameContainer.append(player1BoardContainer, player2BoardContainer);
+
+gameContainer.append(player1BoardContainer, drawSetupShips());
+
 
 populateBoard(game.player1, player1BoardContainer.querySelector('.board'));
 
-function drawBoardContainer(player){
+
+// HERE WE MAKE:
+// function PLACESHIP BOARD
+// function SHIPS TO PLACE CONTAINER
+
+function drawSetupBoard(player) {
+
+}
+
+function drawSetupShips(player) {
+    const setupShipsContainer = document.createElement('div');
+    setupShipsContainer.classList.add('setup-ships-container');
+    const setupShipsTitle = document.createElement('h3');
+    setupShipsTitle.textContent = 'place your ships:';
+    const ships = [
+        {
+            type: 'carrier',
+            length: 5
+        },
+        {
+            type: 'battleship',
+            length: 4
+        },
+        {
+            type: 'destroyer',
+            length: 3
+        },
+        {
+            type: 'submarine',
+            length: 3
+        },
+        {
+            type: 'patrol boat',
+            length: 2
+        },
+    ];
+    const setupShipsOptions = document.createElement('div');
+    setupShipsOptions.classList.add('setup-ships-options');
+    const startGame = document.createElement('button');
+    startGame.classList.add('setup-button-start');
+    startGame.textContent = 'TO BATTLE!';
+    const randomShips = document.createElement('button');
+    randomShips.classList.add('setup-button-random');
+    randomShips.textContent = 'randomize';
+    setupShipsOptions.append(startGame, randomShips);
+    setupShipsContainer.appendChild(setupShipsTitle);
+    const shipList = document.createElement('div');
+    ships.forEach(ship => {
+        shipList.appendChild(drawShip(ship));
+    })
+    setupShipsContainer.appendChild(shipList);
+    setupShipsContainer.appendChild(setupShipsOptions);
+    return setupShipsContainer;
+}
+
+function drawShip(ship) {
+    const shipContainer = document.createElement('div');
+    shipContainer.classList.add('setup-ship');
+    const shipBox = document.createElement('div');
+    shipBox.classList.add('setup-ship-box');
+    for (let i = 0; i < ship.length; i++){
+        const shipCell = document.createElement('div');
+        shipCell.classList.add('setup-ship-cell');
+        shipBox.appendChild(shipCell);
+    }
+    const shipName = document.createElement('p');
+    shipName.textContent = ship.type;
+    shipContainer.append(shipBox, shipName);
+    return shipContainer;
+}
+
+//
+// 
+// IF GAME CONTAINER HEIGHT IS BIGGER THAN 500PX (I.E., WRAPPED), ADJUST HEADER TO SUIT
+// THIS IS A VERY SCUFFED SOLUTION AND PORBABLY BREAKS WHEN PLACING SHIPS ON SINGLE GRID VIEW
+//
+//
+const gameSizeObserver = new ResizeObserver(entry => {
+    if (entry[0].contentRect.height > 500) header.style.width = '320px';
+    else header.style.width = `${entry[0].contentRect.width}px`;
+    console.log(header.style.width)
+    // header.style.width = `${entry[0].contentRect.width}px`;
+    console.log(header.style.width)
+})
+
+gameSizeObserver.observe(gameContainer);
+
+
+function drawBoardContainer(player) {
     const boardContainer = document.createElement('div');
     boardContainer.classList.add('board-container');
     const playerName = document.createElement('h3');
@@ -77,7 +168,7 @@ function listenForAttack(event) {
 }
 
 // Call an attack for the AI and modify the resulting attacked cell
-function callAIAttack(ai){
+function callAIAttack(ai) {
     if (ai !== game.currentPlayer) return;
     const defendingPlayerNumber = game.defendingPlayer === game.player1 ? '1' : '2';
     const [result, location] = ai.attack(game.defendingPlayer);
@@ -88,9 +179,9 @@ function callAIAttack(ai){
 }
 
 // Handle end-of-turn events
-function nextTurn(){
+function nextTurn() {
     const winner = game.checkGameOver();
-    if (winner){
+    if (winner) {
         alert(`${winner.name} wins`)
         return endGame(winner);
     };
@@ -100,7 +191,7 @@ function nextTurn(){
     }
 }
 
-function endGame(winner){
+function endGame(winner) {
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => cell.removeEventListener('click', listenForAttack, false));
     // announce winner

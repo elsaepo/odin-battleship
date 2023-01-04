@@ -94,3 +94,39 @@ test('report 2/2 ships sunk', () => {
     gameboard.receiveAttack(4,4);
     expect(gameboard.checkAllShipsSunk()).toBe(true);
 })
+
+test('can place a random ship of length 4', () => {
+    const ship4 = gameboard.placeShipRandomly(4);
+    let shipSquares = 0;
+    for (let row = 0; row < 10; row++){
+        for (let col = 0; col < 10; col++){
+            if (gameboard.checkSquare(row, col) === ship4) shipSquares++;
+        }
+    }
+    expect(shipSquares).toBe(4);
+})
+
+test('can place a random ship of length 10', () => {
+    const ship10 = gameboard.placeShipRandomly(10);
+    let shipSquares = 0;
+    for (let row = 0; row < 10; row++){
+        for (let col = 0; col < 10; col++){
+            if (gameboard.checkSquare(row, col) === ship10) shipSquares++;
+        }
+    }
+    expect(shipSquares).toBe(10);
+})
+
+test('can place all ships randomly', () => {
+    gameboard.placeAllShipsRandomly();
+    let shipSquares = 0;
+    for (let row = 0; row < 10; row++){
+        for (let col = 0; col < 10; col++){
+            console.log(gameboard.checkSquare(row, col))
+            if (typeof gameboard.checkSquare(row, col) === 'object' && gameboard.checkSquare(row, col) !== null) shipSquares++;
+        }
+    }
+    expect(gameboard.placedShips.length).toBe(5);
+    expect(shipSquares).toBe(17)
+
+})
