@@ -18,13 +18,18 @@ app.appendChild(footer);
 //
 const game = Game();
 game.newGame('Bob', false);
-game.testGame();
+
+
+// game.testGame();
+game.player1.gameboard.placeAllShipsRandomly();
+game.player2.gameboard.placeAllShipsRandomly();
 
 const player1BoardContainer = drawBoardContainer(game.player1);
-// const player2BoardContainer = drawBoardContainer(game.player2);
-// gameContainer.append(player1BoardContainer, player2BoardContainer);
+const player2BoardContainer = drawBoardContainer(game.player2);
 
-gameContainer.append(player1BoardContainer, drawSetupShips());
+gameContainer.append(player1BoardContainer, player2BoardContainer);
+
+// gameContainer.append(player1BoardContainer, drawSetupShips());
 
 
 populateBoard(game.player1, player1BoardContainer.querySelector('.board'));
@@ -109,9 +114,7 @@ function drawShip(ship) {
 const gameSizeObserver = new ResizeObserver(entry => {
     if (entry[0].contentRect.height > 500) header.style.width = '320px';
     else header.style.width = `${entry[0].contentRect.width}px`;
-    console.log(header.style.width)
     // header.style.width = `${entry[0].contentRect.width}px`;
-    console.log(header.style.width)
 })
 
 gameSizeObserver.observe(gameContainer);
