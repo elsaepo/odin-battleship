@@ -1,46 +1,178 @@
-*, *::before, *::after {
+@import url("https://fonts.googleapis.com/css2?family=Carter+One&family=Poppins:wght@200;300;400;500;600&family=Roboto+Mono:wght@200;400;700&display=swap");
+
+:root {
+    --header-height: 100px;
+
+    --background-color: rgb(240, 240, 240);
+    --cell-color: rgb(230, 230, 230);
+    --cell-hover-color: rgb(200, 200, 200);
+    --cell-border-color: rgb(70, 70, 70);
+    --ship-color: rgb(150, 150, 150);
+    --hit-color: rgb(206, 134, 134);
+    --miss-color: rgb(161, 216, 161);
+
+    --text-color-main: rgb(40, 40, 40);
+    --text-color-grey: rgb(100, 100, 100);
+
+    --button-color: rgb(210, 210, 210);
+    --button-color-hover: rgb(230, 230, 230);
+    --button-color-active: grey;
+}
+
+:root.dark {
+    --background-color: rgb(30, 30, 30);
+    --cell-color: rgb(40, 40, 40);
+    --cell-hover-color: rgb(70, 70, 70);
+    --cell-border-color: rgb(220, 220, 220);
+    --ship-color: rgb(153, 153, 153);
+    --hit-color: rgb(155, 61, 61);
+    --miss-color: rgb(52, 109, 52);
+
+    --text-color-main: rgb(220, 220, 220);
+    --text-color-grey: rgb(160, 160, 160);
+
+    --button-color: rgb(50, 50, 50);
+    --button-color-hover: rgb(20, 20, 20);
+    --button-color-active: grey;
+}
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
     padding: 0;
-    background-color: rgb(220,220,220);
+    background-color: var(--background-color);
+    font-family: 'Roboto Mono', monospace;
+    color: var(--text-color-main);
 }
 
 #app {
-    padding: 10%;
+    padding: 0 10%;
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: space-around;
-    align-content: center;
-    border: 2px solid black;
+    flex-direction: column;
+    justify-content: center;
 }
 
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header button {
+    height: 32px;
+    width: 120px;
+    font-size: 1rem;
+    padding-bottom: 2px;
+}
+
+button {
+    font-family: 'Poppins', Arial, sans-serif;
+    color: var(--text-color-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--text-color-main);
+    border-radius: 0;
+    background-color: var(--button-color);
+}
+
+button:active {
+    background-color: var(--button-color-active);
+}
+
+@media (hover: hover) {
+    button:hover {
+        cursor: pointer;
+        border-width: 2px;
+        background-color: var(--button-color-hover);
+    }
+}
+
+
+#game-container {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+/* Player sections */
+.board-container {
+
+}
+
+
+/* Player boards */
 .board {
     display: grid;
     width: 400px;
     height: 400px;
     grid-template-rows: repeat(10, 1fr);
     grid-template-columns: repeat(10, 1fr);
-    gap: 1px;
+    gap: 2px;
 }
 
 .cell {
     cursor: crosshair;
-    background-color: rgb(200,200,200);
-    border: 1px solid grey;
+    background-color: var(--cell-color);
+    border: 1px solid var(--cell-border-color);
+}
+
+/* Only allow visible hover for opposing player's board */
+@media (hover: hover){
+    .cell:not([data-player='1']):not(.cell-hit):not(.cell-miss):hover{
+        background-color: var(--cell-hover-color);
+    }
 }
 
 .cell-ship {
-    background-color: blue;
+    background-color: var(--ship-color);
 }
 
 .cell-hit {
-    background-color: red;
+    background-color: var(--hit-color);
 }
 
 .cell-miss {
-    background-color: green;
+    background-color: var(--miss-color);
+}
+
+/* Footer */
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+    padding: 0 32px;
+}
+
+#footer-link {
+    text-decoration: none;
+}
+
+footer p {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+footer i {
+    color: var(--text-color-main);
+    transition: transform 0.1s ease;
+}
+
+@media (hover: hover) {
+    #footer-link:hover,
+    #footer-dark-mode:hover {
+        cursor: pointer;
+        transform: scale(1.2);
+        transition: transform 0.1s ease;
+    }
 }

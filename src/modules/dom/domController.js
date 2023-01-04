@@ -1,20 +1,41 @@
-import Game from './game';
+import Game from '../game';
+import createHeaderBox from './header';
+import createFooterBox from './footer';
 
 const app = document.createElement('div');
 app.id = 'app';
 document.body.appendChild(app);
+const header = createHeaderBox();
+const footer = createFooterBox();
+const gameContainer = document.createElement('div');
+gameContainer.id = 'game-container';
+app.appendChild(header);
+app.appendChild(gameContainer);
+app.appendChild(footer);
 
+//
+//new game creation goes here-ish
+//
 const game = Game();
 game.newGame('Bob', false);
 game.testGame();
-let player1Board = drawBoard(1);
-let player2Board = drawBoard(2);
 
+const player1BoardContainer = drawBoardContainer(game.player1);
+const player2BoardContainer = drawBoardContainer(game.player2);
+gameContainer.append(player1BoardContainer, player2BoardContainer);
 
-app.append(player1Board, player2Board);
+populateBoard(game.player1, player1BoardContainer.querySelector('.board'));
 
-populateBoard(game.player1, player1Board)
-// populateBoard(game.player2, player2Board)
+function drawBoardContainer(player){
+    const boardContainer = document.createElement('div');
+    boardContainer.classList.add('board-container');
+    const playerName = document.createElement('h3');
+    playerName.textContent = `${player.name}'s fleet`;
+    const playerNumber = player === game.player1 ? 1 : 2;
+    const playerBoard = drawBoard(playerNumber);
+    boardContainer.append(playerName, playerBoard);
+    return boardContainer;
+}
 
 // Draw a grid of cells with data attributes for their locations
 function drawBoard(player) {
@@ -28,7 +49,11 @@ function drawBoard(player) {
             cell.dataset.row = row;
             cell.dataset.col = col;
             board.appendChild(cell);
-            if (!player.isAI) cell.addEventListener('click', listenForAttack, false);
+            //
+            // MAY NEED TO REVISE
+            // NEED TO ADD EVENT LISTENERS ONLY FOR OPPOSING PLAYER'S BOARD
+            //
+            if (player === 2) cell.addEventListener('click', listenForAttack, false);
         }
     }
     return board;

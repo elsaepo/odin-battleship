@@ -1,5 +1,5 @@
 import './style.css';
-import './modules/domController'
+import './modules/dom/domController'
 
 // import Icon from './icon.png';
 // const myIcon = new Image();
