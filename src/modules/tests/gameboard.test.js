@@ -122,11 +122,23 @@ test('can place all ships randomly', () => {
     let shipSquares = 0;
     for (let row = 0; row < 10; row++){
         for (let col = 0; col < 10; col++){
-            console.log(gameboard.checkSquare(row, col))
             if (typeof gameboard.checkSquare(row, col) === 'object' && gameboard.checkSquare(row, col) !== null) shipSquares++;
         }
     }
     expect(gameboard.placedShips.length).toBe(5);
     expect(shipSquares).toBe(17)
+})
 
+test('place all ships randomly multiple times', () => {
+    gameboard.placeAllShipsRandomly();
+    gameboard.placeAllShipsRandomly();
+    gameboard.placeAllShipsRandomly();
+    let shipSquares = 0;
+    for (let row = 0; row < 10; row++){
+        for (let col = 0; col < 10; col++){
+            if (typeof gameboard.checkSquare(row, col) === 'object' && gameboard.checkSquare(row, col) !== null) shipSquares++;
+        }
+    }
+    expect(gameboard.placedShips.length).toBe(5);
+    expect(shipSquares).toBe(17)
 })

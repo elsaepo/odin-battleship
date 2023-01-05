@@ -13,34 +13,61 @@ app.appendChild(header);
 app.appendChild(gameContainer);
 app.appendChild(footer);
 
-//
-//new game creation goes here-ish
-//
 const game = Game();
-game.newGame('Bob', false);
+// drawGame('Bob', false)
+// drawGame('bob', true)
+newGame();
 
+function startGame(player1, player2){
+    game.newGame(player1, player2);
+    drawGame();
+}
 
-// game.testGame();
-game.player1.gameboard.placeAllShipsRandomly();
-game.player2.gameboard.placeAllShipsRandomly();
+function newGame(){
+    const newPlayer1 = game.createPlayer('Mysterio', 1);
+    const newPlayer2 = game.createPlayer(false, 2);
+    console.log(newPlayer2)
+    newPlayer2.gameboard.placeAllShipsRandomly();
+    drawSetup(newPlayer1);
+    const startGameButton = document.querySelector('.setup-button-start');
+    startGameButton.addEventListener('click', function(event){
+        if (newPlayer1.gameboard.placedShips.length === 5){
+            startGame(newPlayer1, newPlayer2);
+        }
+        
+    });
 
-const player1BoardContainer = drawBoardContainer(game.player1);
-const player2BoardContainer = drawBoardContainer(game.player2);
+}
 
-gameContainer.append(player1BoardContainer, player2BoardContainer);
+function clearContainer(container){
+    console.log(container.firstChild)
+    while (container.firstChild) container.removeChild(container.firstChild);
+}
 
-// gameContainer.append(player1BoardContainer, drawSetupShips());
+function drawGame() {
+    clearContainer(gameContainer);
+    const player1BoardContainer = drawBoardContainer(game.player1);
+    const player2BoardContainer = drawBoardContainer(game.player2);
+    populateBoard(game.player1, player1BoardContainer.querySelector('.board'));
+    gameContainer.append(player1BoardContainer, player2BoardContainer);
 
+}
 
-populateBoard(game.player1, player1BoardContainer.querySelector('.board'));
-
-
-// HERE WE MAKE:
-// function PLACESHIP BOARD
-// function SHIPS TO PLACE CONTAINER
+function drawSetup(player){
+    clearContainer(gameContainer);
+    const setupBoard = drawSetupBoard(player);
+    const setupShips = drawSetupShips();
+    const randomShipsButton = setupShips.querySelector('.setup-button-random');
+    randomShipsButton.addEventListener('click', function(event){
+        randomizeFleet(player, setupBoard)
+    });
+    
+    gameContainer.append(setupBoard, setupShips);
+}
 
 function drawSetupBoard(player) {
-
+    // placeholder that just draws an empty grid
+    return drawBoardContainer(player)
 }
 
 function drawSetupShips(player) {
@@ -94,7 +121,7 @@ function drawShip(ship) {
     shipContainer.classList.add('setup-ship');
     const shipBox = document.createElement('div');
     shipBox.classList.add('setup-ship-box');
-    for (let i = 0; i < ship.length; i++){
+    for (let i = 0; i < ship.length; i++) {
         const shipCell = document.createElement('div');
         shipCell.classList.add('setup-ship-cell');
         shipBox.appendChild(shipCell);
@@ -103,6 +130,11 @@ function drawShip(ship) {
     shipName.textContent = ship.type;
     shipContainer.append(shipBox, shipName);
     return shipContainer;
+}
+
+function randomizeFleet(player, board){
+    player.gameboard.placeAllShipsRandomly();
+    populateBoard(player, board);
 }
 
 //
@@ -119,14 +151,20 @@ const gameSizeObserver = new ResizeObserver(entry => {
 
 gameSizeObserver.observe(gameContainer);
 
+//
+//
+//
+//
 
+// Hold the information of the player's board - name, board and ships left
 function drawBoardContainer(player) {
     const boardContainer = document.createElement('div');
     boardContainer.classList.add('board-container');
     const playerName = document.createElement('h3');
-    playerName.textContent = `${player.name}'s fleet`;
-    const playerNumber = player === game.player1 ? 1 : 2;
-    const playerBoard = drawBoard(playerNumber);
+    // CAN TRIM THIS LATER PROBABLY
+    if (player) playerName.textContent = `${player.name}'s fleet`;
+    else playerName.textContent = 'your current fleet';
+    const playerBoard = drawBoard(player);
     boardContainer.append(playerName, playerBoard);
     return boardContainer;
 }
@@ -139,7 +177,8 @@ function drawBoard(player) {
         for (let col = 0; col < 10; col++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            cell.dataset.player = player;
+            // CAN TRIM THIS LATER PROBABLY
+            cell.dataset.player = player ? player.number : 0;
             cell.dataset.row = row;
             cell.dataset.col = col;
             board.appendChild(cell);
@@ -147,7 +186,7 @@ function drawBoard(player) {
             // MAY NEED TO REVISE
             // NEED TO ADD EVENT LISTENERS ONLY FOR OPPOSING PLAYER'S BOARD
             //
-            if (player === 2) cell.addEventListener('click', listenForAttack, false);
+            if (player && player.isAI) cell.addEventListener('click', listenForAttack, false);
         }
     }
     return board;
@@ -206,10 +245,11 @@ function populateBoard(player, board) {
     for (let row = 0; row < 10; row++) {
         for (let col = 0; col < 10; col++) {
             const square = player.gameboard.board[row][col];
+            const cell = board.querySelector(`[data-row='${row}'][data-col='${col}']`);
             if (square !== null && typeof square === 'object') {
-                const cell = board.querySelector(`[data-row='${row}'][data-col='${col}']`);
                 cell.classList.add('cell-ship')
             }
+            else cell.classList.remove('cell-ship');
         }
     }
 }

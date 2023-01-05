@@ -15,6 +15,16 @@ function Gameboard() {
         }
         return gameboardArray;
     }
+    function clearBoard(board){
+        for (let row = 0; row < 10; row++){
+            for (let col = 0; col < 10; col++){
+                board[row][col] = null;
+            }
+        }
+    }
+    function clearFleet(fleet){
+        while (fleet.length > 0) fleet.pop();
+    }
     // Return the value of a square in the gameboard, and undefined if outside the gameboard extents
     function checkSquare(row, col) {
         if (row < 0 || col < 0) return undefined;
@@ -45,6 +55,8 @@ function Gameboard() {
         } else return "Cannot place ship in that location";
     }
     function placeAllShipsRandomly(){
+        clearBoard(this.board);
+        clearFleet(this.placedShips);
         const ships = [5, 4, 3, 3, 2];
         for (let i = 0; i < ships.length; i++){
             let result = this.placeShipRandomly(ships[i]);

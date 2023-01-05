@@ -5,9 +5,12 @@ function Game(){
     let player2;
     let currentPlayer;
     let defendingPlayer;
-    function newGame(player1Name, player2Name){
-        this.player1 = Player(player1Name);
-        this.player2 = Player(player2Name);
+    function createPlayer(name, number){
+        return Player(name, number);
+    }
+    function newGame(player1, player2){
+        this.player1 = player1;
+        this.player2 = player2;
         this.currentPlayer = this.player1;
         this.defendingPlayer = this.player2;
     }
@@ -33,6 +36,7 @@ function Game(){
         player2,
         currentPlayer,
         defendingPlayer,
+        createPlayer,
         newGame,
         changeTurn,
         checkGameOver,

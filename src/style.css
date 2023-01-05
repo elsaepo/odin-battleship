@@ -9,8 +9,9 @@
     --cell-hover-color: rgb(200, 200, 200);
     --cell-border-color: rgb(70, 70, 70);
     --ship-color: rgb(150, 150, 150);
-    --hit-color: rgb(206, 134, 134);
+    --hit-color: rgb(206, 169, 134);
     --miss-color: rgb(161, 216, 161);
+    --sunk-color: rgb(206, 134, 134);
     --text-color-main: rgb(40, 40, 40);
     --text-color-grey: rgb(100, 100, 100);
     --button-color: rgb(210, 210, 210);
@@ -24,8 +25,9 @@
     --cell-hover-color: rgb(70, 70, 70);
     --cell-border-color: rgb(220, 220, 220);
     --ship-color: rgb(153, 153, 153);
-    --hit-color: rgb(155, 61, 61);
+    --hit-color: rgb(155, 99, 61);
     --miss-color: rgb(52, 109, 52);
+    --sunk-color: rgb(155, 61, 61);
     --text-color-main: rgb(220, 220, 220);
     --text-color-grey: rgb(160, 160, 160);
     --button-color: rgb(50, 50, 50);
@@ -172,6 +174,11 @@ border: 1px solid black;
     font-size: 1rem;
     background-color: rgb(235, 189, 129);
     transition: transform 0.1s ease;
+}
+
+.setup-button-start-disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 @media (hover: hover){

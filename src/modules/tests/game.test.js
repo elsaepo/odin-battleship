@@ -6,9 +6,9 @@ let ai2;
 
 beforeEach(() => {
     game = Game();
-    game.newGame('bob', false);
-    player1 = game.player1;
-    ai2 = game.player2;
+    player1 = game.createPlayer('Bob', 1);
+    ai2 = game.createPlayer(false, 2);
+    game.newGame(player1, ai2);
 })
 
 test('create game with human and ai', () => {
