@@ -1,6 +1,7 @@
 import Game from '../game';
 import createHeaderBox from './header';
 import createFooterBox from './footer';
+import makeDraggableShip from './draggableShip';
 
 const app = document.createElement('div');
 app.id = 'app';
@@ -36,7 +37,6 @@ function newGame(){
         }
         
     });
-
 }
 
 function clearContainer(container){
@@ -57,6 +57,10 @@ function drawSetup(player){
     clearContainer(gameContainer);
     const setupBoard = drawSetupBoard(player);
     const setupShips = drawSetupShips();
+
+    const ships = setupShips.querySelectorAll('.setup-ship-box');
+    console.log(ships)
+
     const randomShipsButton = setupShips.querySelector('.setup-button-random');
     randomShipsButton.addEventListener('click', function(event){
         randomizeFleet(player, setupBoard)
@@ -109,7 +113,8 @@ function drawSetupShips(player) {
     setupShipsContainer.appendChild(setupShipsTitle);
     const shipList = document.createElement('div');
     ships.forEach(ship => {
-        shipList.appendChild(drawShip(ship));
+        ship.element = drawShip(ship);
+        shipList.appendChild(ship.element);
     })
     setupShipsContainer.appendChild(shipList);
     setupShipsContainer.appendChild(setupShipsOptions);
@@ -126,6 +131,7 @@ function drawShip(ship) {
         shipCell.classList.add('setup-ship-cell');
         shipBox.appendChild(shipCell);
     }
+    shipBox.draggable = true;
     const shipName = document.createElement('p');
     shipName.textContent = ship.type;
     shipContainer.append(shipBox, shipName);
