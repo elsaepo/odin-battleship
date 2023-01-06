@@ -27,7 +27,6 @@ function startGame(player1, player2){
 function newGame(){
     const newPlayer1 = game.createPlayer('Mysterio', 1);
     const newPlayer2 = game.createPlayer(false, 2);
-    console.log(newPlayer2)
     newPlayer2.gameboard.placeAllShipsRandomly();
     drawSetup(newPlayer1);
     const startGameButton = document.querySelector('.setup-button-start');
@@ -40,7 +39,6 @@ function newGame(){
 }
 
 function clearContainer(container){
-    console.log(container.firstChild)
     while (container.firstChild) container.removeChild(container.firstChild);
 }
 
@@ -71,7 +69,17 @@ function drawSetup(player){
 
 function drawSetupBoard(player) {
     // placeholder that just draws an empty grid
-    return drawBoardContainer(player)
+    const setupBoard = drawBoardContainer(player)
+    const setupCells = setupBoard.querySelectorAll('.cell')
+    setupCells.forEach(cell => {
+        cell.player = player;
+        cell.board = setupBoard;
+        cell.addEventListener('dragenter', dragEnter);
+        cell.addEventListener('dragover', dragOver);
+        cell.addEventListener('dragleave', dragLeave);
+        cell.addEventListener('drop', drop);
+    })
+    return setupBoard;
 }
 
 function drawSetupShips(player) {
@@ -81,22 +89,27 @@ function drawSetupShips(player) {
     setupShipsTitle.textContent = 'place your ships:';
     const ships = [
         {
+            id: 1,
             type: 'carrier',
             length: 5
         },
         {
+            id: 2,
             type: 'battleship',
             length: 4
         },
         {
+            id: 3,
             type: 'destroyer',
             length: 3
         },
         {
+            id: 4,
             type: 'submarine',
             length: 3
         },
         {
+            id: 5,
             type: 'patrol boat',
             length: 2
         },
@@ -125,6 +138,8 @@ function drawShip(ship) {
     const shipContainer = document.createElement('div');
     shipContainer.classList.add('setup-ship');
     const shipBox = document.createElement('div');
+    shipBox.id = ship.id;
+    shipBox.dataset.length = ship.length;
     shipBox.classList.add('setup-ship-box');
     for (let i = 0; i < ship.length; i++) {
         const shipCell = document.createElement('div');
@@ -132,10 +147,89 @@ function drawShip(ship) {
         shipBox.appendChild(shipCell);
     }
     shipBox.draggable = true;
+
+    shipBox.addEventListener('dragstart', dragStart);
+
     const shipName = document.createElement('p');
     shipName.textContent = ship.type;
     shipContainer.append(shipBox, shipName);
     return shipContainer;
+}
+
+
+
+function dragStart(event){
+    event.dataTransfer.setData('text/plain', event.target.id);
+    setTimeout(() => {
+        event.target.classList.add('setup-ship-hide');
+    }, 0)
+    
+}
+
+function dragEnter(event){
+    event.preventDefault();
+    event.target.classList.add('cell-drag-over');
+    // highlightCells(event);
+}
+
+function dragOver(event){
+    event.preventDefault();
+    event.target.classList.add('cell-drag-over');
+}
+
+function dragLeave(event){
+    event.target.classList.remove('cell-drag-over');
+}
+
+function drop(event){
+    event.target.classList.remove('cell-drag-over');
+    const id = event.dataTransfer.getData('text/plain');
+    const draggable = document.getElementById(id);
+    event.target.appendChild(draggable)
+    draggable.classList.remove('setup-ship-hide');
+    draggable.classList.add('setup-ship-dropped');
+    const player = event.target.player;
+    const board = event.target.board;
+    const row = event.target.dataset.row;
+    const col = event.target.dataset.col;
+    console.log(draggable)
+    console.log(draggable.dataset.length)
+    player.gameboard.placeShip(draggable.dataset.length, [row,col], 'horizontal')
+    populateBoard(player, board)
+}
+
+//
+///
+//
+///
+/// REMOVE SHIP FUNCTION ON PICKING UP SHIP
+// I.E., IF CLASS HAS DROPPED, THEN REMOVE THE SHIP
+//
+//
+// THEN NEED TO HIGHLIGHT AVAILABLE/RESTRICTED CELLS
+//
+// THEN FIGURE OUT HOW TO DO ROTATION
+//
+// THEN ADD IN GHOST SHIP SO IS OBVIOUS TO PLAYER WHAT SHIPS ARE LEFT TO PLACE AND WHAT HAS BEEN PLACED
+///
+//
+//
+///
+//
+
+function highlightCells(event){
+    const player = event.target.player;
+    const board = event.target.board;
+    const id = event.dataTransfer.getData('text/plain');
+    const draggable = document.getElementById(id);
+    const row = event.target.dataset.row;
+    const col = event.target.dataset.col;
+    console.log(event.target.dataset.row);
+    console.log(event.target.dataset.col)
+    console.log(event.target.player)
+    console.log(id)
+    player.gameboard.placeShip(id, [row,col], 'horizontal')
+    populateBoard(player, board)
 }
 
 function randomizeFleet(player, board){

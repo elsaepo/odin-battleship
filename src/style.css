@@ -152,7 +152,14 @@ button:active {
     gap: 2px;
 }
 
+.setup-ship-hide div {
+    background-color: rgba(0,0,0,0);
+    opacity: 0.5;
+}
 
+.setup-ship-dropped {
+    position: absolute;
+}
 
 .setup-ship-cell {
 width: 30.2px;
@@ -212,6 +219,10 @@ border: 1px solid black;
     align-items: center;
     background-color: var(--cell-color);
     border: 1px solid var(--cell-border-color);
+}
+
+.cell-drag-over {
+    background-color: red;
 }
 
 /* Only allow visible hover for opposing player's board */
