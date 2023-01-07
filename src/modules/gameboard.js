@@ -1,4 +1,5 @@
 import Ship from './ship';
+import shipTypes from './shipTypes';
 
 function Gameboard() {
     const board = createEmptyGameboard();
@@ -15,14 +16,14 @@ function Gameboard() {
         }
         return gameboardArray;
     }
-    function clearBoard(board){
-        for (let row = 0; row < 10; row++){
-            for (let col = 0; col < 10; col++){
+    function clearBoard(board) {
+        for (let row = 0; row < 10; row++) {
+            for (let col = 0; col < 10; col++) {
                 board[row][col] = null;
             }
         }
     }
-    function clearFleet(fleet){
+    function clearFleet(fleet) {
         while (fleet.length > 0) fleet.pop();
     }
     // Return the value of a square in the gameboard, and undefined if outside the gameboard extents
@@ -31,22 +32,35 @@ function Gameboard() {
         if (row > 9 || col > 9) return undefined;
         else return this.board[row][col];
     }
-    function placeShip(shipLength, origin, alignment) {
-        const ship = Ship(shipLength);
+    function checkValidPlacement(shipLength, origin, alignment) {
         // Create an array of ship placement squares
         let [row, col] = origin;
         let shipSquares = [];
-        for (let i = 0; i < ship.length; i++) {
+        for (let i = 0; i < shipLength; i++) {
             shipSquares.push([row, col]);
             alignment === 'horizontal' ? col++ : row++;
         }
-        // If every placement square is null, place the ship on all those squares
-        if (shipSquares.every(square => {
+        // If every placement square is null, validPlacement is an array of the valid squares
+        const validPlacement = shipSquares.every(square => {
             let [row, col] = square;
             if (this.checkSquare(row, col) === undefined) return false;
             return this.board[row][col] === null;
-        })) {
-            shipSquares.forEach(square => {
+        })
+        // Return an dobject containing the validity and the squares processed
+        return {
+            isValid: validPlacement,
+            squares: shipSquares
+        }
+    }
+    function placeShip(shipType, origin, alignment) {
+        const shipLength = shipTypes[shipType].length;
+        const shipSquares = this.checkValidPlacement(shipLength, origin, alignment);
+        // If shipSquares is a valid array, place the ship on all of those squares
+        if (shipSquares.isValid) {
+            const ship = Ship(shipType);
+            ship.squares = shipSquares.squares;
+            ship.alignment = alignment;
+            shipSquares.squares.forEach(square => {
                 let [row, col] = square;
                 this.board[row][col] = ship;
             })
@@ -54,18 +68,26 @@ function Gameboard() {
             return ship;
         } else return "Cannot place ship in that location";
     }
-    function placeAllShipsRandomly(){
+    function removeShip(squares){
+        squares.forEach(square => {
+            const [row, col] = square;
+            this.board[row][col] = null;
+        })
+    }
+    function placeAllShipsRandomly() {
         clearBoard(this.board);
         clearFleet(this.placedShips);
-        const ships = [5, 4, 3, 3, 2];
-        for (let i = 0; i < ships.length; i++){
-            let result = this.placeShipRandomly(ships[i]);
-            while (typeof result !== 'object' || result === null){
-                result = this.placeShipRandomly(ships[i]);
+        for (let ship in shipTypes){
+            let result = this.placeShipRandomly(ship);
+            while (typeof result !== 'object' || result === null) {
+                result = this.placeShipRandomly(ship);
             }
         }
     }
-    function placeShipRandomly(shipLength) {
+    // Take a ship and determine a random alignment and origin
+    // Keep trying to place ship until an allowed location is found
+    function placeShipRandomly(shipType) {
+        const shipLength = shipTypes[shipType].length;
         function getRandomAlignment() {
             return Math.random() < 0.5 ? 'horizontal' : 'vertical';
         }
@@ -80,13 +102,14 @@ function Gameboard() {
         }
         let alignment = getRandomAlignment();
         let origin = getRandomOrigin(alignment);
-        let result = this.placeShip(shipLength, origin, alignment);
-        while (typeof result !== 'object' || result === null) {
+        let shipSquares = this.checkValidPlacement(shipLength, origin, alignment);
+        // let result = this.placeShip(shipLength, origin, alignment);
+        while (!shipSquares.isValid) {
             alignment = getRandomAlignment();
             origin = getRandomOrigin(alignment);
-            result = this.placeShip(shipLength, origin, alignment);
+            shipSquares = this.checkValidPlacement(shipLength, origin, alignment);
         }
-        return result;
+        return this.placeShip(shipType, origin, alignment);
     }
     // Receives an attack and calculates the result
     // Returns an array - 'hit' or 'miss' depending on result, and the coordinates
@@ -106,7 +129,9 @@ function Gameboard() {
         board,
         placedShips,
         checkSquare,
+        checkValidPlacement,
         placeShip,
+        removeShip,
         placeAllShipsRandomly,
         placeShipRandomly,
         receiveAttack,

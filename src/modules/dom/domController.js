@@ -1,6 +1,7 @@
 import Game from '../game';
 import createHeaderBox from './header';
 import createFooterBox from './footer';
+import shipTypes from '../shipTypes';
 import makeDraggableShip from './draggableShip';
 
 const app = document.createElement('div');
@@ -73,7 +74,7 @@ function drawSetupBoard(player) {
     const setupCells = setupBoard.querySelectorAll('.cell')
     setupCells.forEach(cell => {
         cell.player = player;
-        cell.board = setupBoard;
+        cell.board = setupBoard.querySelector('div');
         cell.addEventListener('dragenter', dragEnter);
         cell.addEventListener('dragover', dragOver);
         cell.addEventListener('dragleave', dragLeave);
@@ -87,33 +88,6 @@ function drawSetupShips(player) {
     setupShipsContainer.classList.add('setup-ships-container');
     const setupShipsTitle = document.createElement('h3');
     setupShipsTitle.textContent = 'place your ships:';
-    const ships = [
-        {
-            id: 1,
-            type: 'carrier',
-            length: 5
-        },
-        {
-            id: 2,
-            type: 'battleship',
-            length: 4
-        },
-        {
-            id: 3,
-            type: 'destroyer',
-            length: 3
-        },
-        {
-            id: 4,
-            type: 'submarine',
-            length: 3
-        },
-        {
-            id: 5,
-            type: 'patrol boat',
-            length: 2
-        },
-    ];
     const setupShipsOptions = document.createElement('div');
     setupShipsOptions.classList.add('setup-ships-options');
     const startGame = document.createElement('button');
@@ -123,14 +97,11 @@ function drawSetupShips(player) {
     randomShips.classList.add('setup-button-random');
     randomShips.textContent = 'randomize';
     setupShipsOptions.append(startGame, randomShips);
-    setupShipsContainer.appendChild(setupShipsTitle);
     const shipList = document.createElement('div');
-    ships.forEach(ship => {
-        ship.element = drawShip(ship);
-        shipList.appendChild(ship.element);
-    })
-    setupShipsContainer.appendChild(shipList);
-    setupShipsContainer.appendChild(setupShipsOptions);
+    for (let ship in shipTypes){
+        shipList.appendChild(drawShip(shipTypes[ship]));
+    }
+    setupShipsContainer.append(setupShipsTitle, shipList, setupShipsOptions);
     return setupShipsContainer;
 }
 
@@ -138,7 +109,7 @@ function drawShip(ship) {
     const shipContainer = document.createElement('div');
     shipContainer.classList.add('setup-ship');
     const shipBox = document.createElement('div');
-    shipBox.id = ship.id;
+    shipBox.id = ship.name;
     shipBox.dataset.length = ship.length;
     shipBox.classList.add('setup-ship-box');
     for (let i = 0; i < ship.length; i++) {
@@ -151,62 +122,76 @@ function drawShip(ship) {
     shipBox.addEventListener('dragstart', dragStart);
 
     const shipName = document.createElement('p');
-    shipName.textContent = ship.type;
-    shipContainer.append(shipBox, shipName);
+    shipName.textContent = ship.name;
+    shipContainer.append(shipName, shipBox);
     return shipContainer;
 }
 
 
 
 function dragStart(event){
-    event.dataTransfer.setData('text/plain', event.target.id);
+    event.dataTransfer.setData(`${event.target.id}`, true);
     setTimeout(() => {
         event.target.classList.add('setup-ship-hide');
     }, 0)
-    
 }
 
 function dragEnter(event){
     event.preventDefault();
+    const type = event.dataTransfer.types[0];
+    const player = event.target.player;
+    const board = event.target.board;
+    const row = parseInt(event.target.dataset.row);
+    const col = parseInt(event.target.dataset.col);
+    console.log(player)
+    const shipSquares = player.gameboard.checkValidPlacement(shipTypes[type].length, [row, col], 'horizontal')
+    shipSquares.squares = shipSquares.squares.filter(square => {
+        return player.gameboard.checkSquare(square[0], square[1]) !== undefined;
+    })
+    shipSquares.squares.forEach(square => {
+        const cell = board.querySelector(`[data-row='${square[0]}'][data-col='${square[1]}']`);
+        cell.classList.add('cell-drag-over');
+        if (shipSquares.isValid) cell.classList.add('cell-drag-valid');
+        else cell.classList.add('cell-drag-invalid');
+    })
     event.target.classList.add('cell-drag-over');
-    // highlightCells(event);
 }
 
 function dragOver(event){
     event.preventDefault();
-    event.target.classList.add('cell-drag-over');
 }
 
 function dragLeave(event){
-    event.target.classList.remove('cell-drag-over');
+    const leftCells = document.querySelectorAll('.cell-drag-over');
+    leftCells.forEach(cell => {
+        cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
+    })
 }
 
 function drop(event){
-    event.target.classList.remove('cell-drag-over');
-    const id = event.dataTransfer.getData('text/plain');
-    const draggable = document.getElementById(id);
-    event.target.appendChild(draggable)
-    draggable.classList.remove('setup-ship-hide');
-    draggable.classList.add('setup-ship-dropped');
+    const leftCells = document.querySelectorAll('.cell-drag-over');
+    leftCells.forEach(cell => {
+        cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
+    })
+
+    const type = event.dataTransfer.types[0];
+    const shipElement = document.getElementById(type);
+    event.target.appendChild(shipElement)
+    shipElement.classList.remove('setup-ship-hide');
+    shipElement.classList.add('setup-ship-dropped');
     const player = event.target.player;
     const board = event.target.board;
     const row = event.target.dataset.row;
     const col = event.target.dataset.col;
-    console.log(draggable)
-    console.log(draggable.dataset.length)
-    player.gameboard.placeShip(draggable.dataset.length, [row,col], 'horizontal')
-    populateBoard(player, board)
+    player.gameboard.placeShip(shipElement.id, [row,col], 'horizontal')
+    // populateBoard(player, board)
 }
 
 //
-///
-//
-///
-/// REMOVE SHIP FUNCTION ON PICKING UP SHIP
+/// REMOVE SHIP FUNCTION ON PICKING UP PLACED SHIP
 // I.E., IF CLASS HAS DROPPED, THEN REMOVE THE SHIP
 //
 //
-// THEN NEED TO HIGHLIGHT AVAILABLE/RESTRICTED CELLS
 //
 // THEN FIGURE OUT HOW TO DO ROTATION
 //
@@ -216,21 +201,6 @@ function drop(event){
 //
 ///
 //
-
-function highlightCells(event){
-    const player = event.target.player;
-    const board = event.target.board;
-    const id = event.dataTransfer.getData('text/plain');
-    const draggable = document.getElementById(id);
-    const row = event.target.dataset.row;
-    const col = event.target.dataset.col;
-    console.log(event.target.dataset.row);
-    console.log(event.target.dataset.col)
-    console.log(event.target.player)
-    console.log(id)
-    player.gameboard.placeShip(id, [row,col], 'horizontal')
-    populateBoard(player, board)
-}
 
 function randomizeFleet(player, board){
     player.gameboard.placeAllShipsRandomly();

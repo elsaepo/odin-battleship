@@ -6,8 +6,8 @@ let ai2;
 beforeEach(() => {
     player1 = Player('bob');
     ai2 = Player(false);
-    player1.gameboard.placeShip(3, [0,0], 'horizontal');
-    ai2.gameboard.placeShip(4, [2,4], 'vertical');
+    player1.gameboard.placeShip('battleship', [0,0], 'horizontal');
+    ai2.gameboard.placeShip('destroyer', [2,4], 'vertical');
 })
 
 test('player has own gameboard', () => {

@@ -59,9 +59,7 @@ body {
     align-items: center;
 }
 
-h1 {
-
-}
+h1 {}
 
 h3 {
     margin: 0;
@@ -133,9 +131,9 @@ button:active {
 }
 
 .setup-ship {
-    /* border: 1px solid red; */
     height: 40px;
     display: flex;
+    flex-direction: row-reverse;
     justify-content: space-between;
     align-items: center;
 }
@@ -143,29 +141,31 @@ button:active {
 .setup-ship p {
     margin: 0;
     display: inline-block;
-    /* margin-right: 160px; */
-    /* text-align: right; */
 }
 
 .setup-ship-box {
     display: inline-flex;
     gap: 2px;
+    position: relative;
+    z-index: 100;
 }
 
 .setup-ship-hide div {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     opacity: 0.5;
 }
 
 .setup-ship-dropped {
     position: absolute;
+    left: -1px;
+    top: -1px;
 }
 
 .setup-ship-cell {
-width: 30.2px;
-height: 30.2px;
-background-color: var(--cell-hover-color);
-border: 1px solid black;
+    width: 30.2px;
+    height: 30.2px;
+    background-color: var(--cell-hover-color);
+    border: 1px solid black;
 }
 
 .setup-ships-options {
@@ -173,7 +173,8 @@ border: 1px solid black;
     justify-content: space-between;
 }
 
-.setup-button-start, .setup-button-random {
+.setup-button-start,
+.setup-button-random {
     width: 120px;
     height: 36px;
 }
@@ -190,7 +191,7 @@ border: 1px solid black;
     pointer-events: none;
 }
 
-@media (hover: hover){
+@media (hover: hover) {
     .setup-button-start:hover {
         transform: scale(1.1);
         background-color: rgb(226, 116, 116);
@@ -213,6 +214,7 @@ border: 1px solid black;
 }
 
 .cell {
+    position: relative;
     cursor: crosshair;
     display: flex;
     justify-content: center;
@@ -222,12 +224,20 @@ border: 1px solid black;
 }
 
 .cell-drag-over {
-    background-color: red;
+    border-width: 2px;
+}
+
+.cell-drag-valid {
+    background-color: var(--miss-color);
+}
+
+.cell-drag-invalid {
+    background-color: var(--hit-color);
 }
 
 /* Only allow visible hover for opposing player's board */
-@media (hover: hover){
-    .cell:not([data-player='1']):not(.cell-hit):not(.cell-miss):hover{
+@media (hover: hover) {
+    .cell:not([data-player='1']):not(.cell-hit):not(.cell-miss):hover {
         background-color: var(--cell-hover-color);
     }
 }
@@ -282,6 +292,7 @@ footer i {
 }
 
 @media (hover: hover) {
+
     #footer-link:hover,
     #footer-dark-mode:hover {
         cursor: pointer;
