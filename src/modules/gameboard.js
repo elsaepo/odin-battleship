@@ -68,11 +68,15 @@ function Gameboard() {
             return ship;
         } else return "Cannot place ship in that location";
     }
-    function removeShip(squares){
-        squares.forEach(square => {
+    function removeShip(origin){
+        const [row, col] = origin;
+        const ship = this.checkSquare(row, col);
+        ship.squares.forEach(square => {
             const [row, col] = square;
             this.board[row][col] = null;
-        })
+        });
+        const placedShipsIndex = this.placedShips.indexOf(ship);
+        this.placedShips.splice(placedShipsIndex, 1);
     }
     function placeAllShipsRandomly() {
         clearBoard(this.board);

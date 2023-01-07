@@ -20,26 +20,26 @@ const game = Game();
 // drawGame('bob', true)
 newGame();
 
-function startGame(player1, player2){
+function startGame(player1, player2) {
     game.newGame(player1, player2);
     drawGame();
 }
 
-function newGame(){
+function newGame() {
     const newPlayer1 = game.createPlayer('Mysterio', 1);
     const newPlayer2 = game.createPlayer(false, 2);
     newPlayer2.gameboard.placeAllShipsRandomly();
     drawSetup(newPlayer1);
     const startGameButton = document.querySelector('.setup-button-start');
-    startGameButton.addEventListener('click', function(event){
-        if (newPlayer1.gameboard.placedShips.length === 5){
+    startGameButton.addEventListener('click', function (event) {
+        if (newPlayer1.gameboard.placedShips.length === 5) {
             startGame(newPlayer1, newPlayer2);
         }
-        
+
     });
 }
 
-function clearContainer(container){
+function clearContainer(container) {
     while (container.firstChild) container.removeChild(container.firstChild);
 }
 
@@ -52,7 +52,7 @@ function drawGame() {
 
 }
 
-function drawSetup(player){
+function drawSetup(player) {
     clearContainer(gameContainer);
     const setupBoard = drawSetupBoard(player);
     const setupShips = drawSetupShips();
@@ -61,10 +61,10 @@ function drawSetup(player){
     console.log(ships)
 
     const randomShipsButton = setupShips.querySelector('.setup-button-random');
-    randomShipsButton.addEventListener('click', function(event){
+    randomShipsButton.addEventListener('click', function (event) {
         randomizeFleet(player, setupBoard)
     });
-    
+
     gameContainer.append(setupBoard, setupShips);
 }
 
@@ -98,7 +98,7 @@ function drawSetupShips(player) {
     randomShips.textContent = 'randomize';
     setupShipsOptions.append(startGame, randomShips);
     const shipList = document.createElement('div');
-    for (let ship in shipTypes){
+    for (let ship in shipTypes) {
         shipList.appendChild(drawShip(shipTypes[ship]));
     }
     setupShipsContainer.append(setupShipsTitle, shipList, setupShipsOptions);
@@ -120,23 +120,59 @@ function drawShip(ship) {
     shipBox.draggable = true;
 
     shipBox.addEventListener('dragstart', dragStart);
+    shipBox.addEventListener('dragend', dragEnd);
 
     const shipName = document.createElement('p');
     shipName.textContent = ship.name;
     shipContainer.append(shipName, shipBox);
     return shipContainer;
+    //
+    //
+    // HERE WE SHOULD MAKE UI FOR ROTATING SHIP
+    // ACTUAL IMPLEMENTATION IS A WHOLE OTHER BEAST
+    // DOUBLE CLICK TO ACTIVATE AND ATTEMPT TO ROTATE ABOUT EACH CELL?
+    //
+    //
 }
 
 
 
-function dragStart(event){
+function dragStart(event) {
     event.dataTransfer.setData(`${event.target.id}`, true);
     setTimeout(() => {
         event.target.classList.add('setup-ship-hide');
-    }, 0)
+    }, 0);
+    if (event.target.parentElement.classList.contains('cell')) {
+        const cell = event.target.parentElement;
+        
+        const player = cell.player;
+        const board = cell.board;
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+        player.gameboard.removeShip([row, col]);
+    }
+
+    //
+    // MAYBE NEW FUNCTION DRAGEND?
+    // AND TRACK ORIGINAL CONTAINER SO WE CAN APPEND IT BACK ON 'NOT PLACED'
 }
 
-function dragEnter(event){
+function dragEnd(event){
+    console.log(event.target.parentElement)
+    setTimeout(() => {
+        getParent(event)
+    }, 500)
+    function getParent(event){
+        console.log(event.target.parentElement)
+        if (event.target.parentElement && event.target.parentElement.classList.contains('cell')) {
+            console.log('drag ended on cell')
+        } 
+        else console.log('drag ended NOT on cell')
+    }
+    
+}
+
+function dragEnter(event) {
     event.preventDefault();
     const type = event.dataTransfer.types[0];
     const player = event.target.player;
@@ -155,20 +191,26 @@ function dragEnter(event){
         else cell.classList.add('cell-drag-invalid');
     })
     event.target.classList.add('cell-drag-over');
+    //
+    //
+    // HERE WE SHOULD BE ABLE TO SEE THE BOARD UNDERNEATH A SHIP BOX
+    // IGNORING IT IN SOME WAY?
+    //
+    //
 }
 
-function dragOver(event){
+function dragOver(event) {
     event.preventDefault();
 }
 
-function dragLeave(event){
+function dragLeave(event) {
     const leftCells = document.querySelectorAll('.cell-drag-over');
     leftCells.forEach(cell => {
         cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
     })
 }
 
-function drop(event){
+function drop(event) {
     const leftCells = document.querySelectorAll('.cell-drag-over');
     leftCells.forEach(cell => {
         cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
@@ -176,15 +218,24 @@ function drop(event){
 
     const type = event.dataTransfer.types[0];
     const shipElement = document.getElementById(type);
-    event.target.appendChild(shipElement)
-    shipElement.classList.remove('setup-ship-hide');
-    shipElement.classList.add('setup-ship-dropped');
+
     const player = event.target.player;
     const board = event.target.board;
     const row = event.target.dataset.row;
     const col = event.target.dataset.col;
-    player.gameboard.placeShip(shipElement.id, [row,col], 'horizontal')
-    // populateBoard(player, board)
+
+    const shipSquares = player.gameboard.checkValidPlacement(shipTypes[type].length, [row, col], 'horizontal')
+    console.log(shipSquares)
+    if (shipSquares.isValid) {
+        event.target.appendChild(shipElement)
+
+        shipElement.classList.add('setup-ship-dropped');
+        player.gameboard.placeShip(shipElement.id, [row, col], 'horizontal')
+    }
+    shipElement.classList.remove('setup-ship-hide');
+
+
+    populateBoard(player, board)
 }
 
 //
@@ -202,7 +253,7 @@ function drop(event){
 ///
 //
 
-function randomizeFleet(player, board){
+function randomizeFleet(player, board) {
     player.gameboard.placeAllShipsRandomly();
     populateBoard(player, board);
 }
@@ -210,7 +261,7 @@ function randomizeFleet(player, board){
 //
 // 
 // IF GAME CONTAINER HEIGHT IS BIGGER THAN 500PX (I.E., WRAPPED), ADJUST HEADER TO SUIT
-// THIS IS A VERY SCUFFED SOLUTION AND PORBABLY BREAKS WHEN PLACING SHIPS ON SINGLE GRID VIEW
+// THIS IS A VERY SCUFFED SOLUTION AND PORBABLY BREAKS SOMEWHERE
 //
 //
 const gameSizeObserver = new ResizeObserver(entry => {

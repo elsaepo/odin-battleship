@@ -144,6 +144,7 @@ button:active {
 }
 
 .setup-ship-box {
+    cursor: grab;
     display: inline-flex;
     gap: 2px;
     position: relative;
