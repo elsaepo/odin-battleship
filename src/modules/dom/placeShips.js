@@ -45,6 +45,7 @@ function drawSetupShips() {
     const randomShips = document.createElement('button');
     randomShips.classList.add('setup-button-random');
     randomShips.textContent = 'randomize';
+    randomShips.addEventListener('click', randomizeFleet);
     setupShipsOptions.append(startGame, randomShips);
     const shipList = document.createElement('div');
     for (let ship in shipTypes) {
@@ -52,6 +53,7 @@ function drawSetupShips() {
     }
     setupShipsContainer.append(setupShipsTitle, shipList, setupShipsOptions);
     return setupShipsContainer;
+    
 }
 
 function drawShip(ship) {
@@ -78,6 +80,24 @@ function drawShip(ship) {
     else shipName.textContent = ship.name;
     shipContainer.append(shipName, shipBox);
     return shipContainer;
+}
+
+function randomizeFleet(){
+    player.gameboard.placeAllShipsRandomly();
+    player.gameboard.placedShips.forEach(ship => {
+        const type = ship.type;
+        const origin = ship.squares[0];
+        const alignment = ship.alignment;
+        const shipElement = document.querySelector(`#${type}`);
+        shipElement.dataset.alignment = alignment;
+        shipElement.classList.add('setup-ship-dropped');
+        if (alignment === 'vertical') shipElement.classList.add('setup-ship-vertical');
+        else shipElement.classList.remove('setup-ship-vertical');
+        const [row, col] = origin;
+        const cell = board.querySelector(`[data-row='${row}'][data-col='${col}']`);
+        cell.appendChild(shipElement);
+        console.log(shipElement.dataset)
+    })
 }
 
 function updateCellDif(event) {
