@@ -2,7 +2,7 @@ import Game from '../game';
 import createHeaderBox from './header';
 import createFooterBox from './footer';
 import shipTypes from '../shipTypes';
-import makeDraggableShip from './draggableShip';
+import setup from './placeShips';
 
 const app = document.createElement('div');
 app.id = 'app';
@@ -54,11 +54,10 @@ function drawGame() {
 
 function drawSetup(player) {
     clearContainer(gameContainer);
-    const setupBoard = drawSetupBoard(player);
-    const setupShips = drawSetupShips();
+    const setupBoard = setup.drawSetupBoard(player, drawBoardContainer(player));
+    const setupShips = setup.drawSetupShips();
 
     const ships = setupShips.querySelectorAll('.setup-ship-box');
-    console.log(ships)
 
     const randomShipsButton = setupShips.querySelector('.setup-button-random');
     randomShipsButton.addEventListener('click', function (event) {
@@ -68,185 +67,185 @@ function drawSetup(player) {
     gameContainer.append(setupBoard, setupShips);
 }
 
-function drawSetupBoard(player) {
-    // placeholder that just draws an empty grid
-    const setupBoard = drawBoardContainer(player)
-    const setupCells = setupBoard.querySelectorAll('.cell')
-    setupCells.forEach(cell => {
-        cell.player = player;
-        cell.board = setupBoard.querySelector('div');
-        cell.addEventListener('dragenter', dragEnter);
-        cell.addEventListener('dragover', dragOver);
-        cell.addEventListener('dragleave', dragLeave);
-        cell.addEventListener('drop', drop);
-    })
-    return setupBoard;
-}
+// function drawSetupBoard(player) {
+//     // placeholder that just draws an empty grid
+//     const setupBoard = drawBoardContainer(player)
+//     const setupCells = setupBoard.querySelectorAll('.cell')
+//     setupCells.forEach(cell => {
+//         cell.player = player;
+//         cell.board = setupBoard.querySelector('div');
+//         cell.addEventListener('dragenter', dragEnter);
+//         cell.addEventListener('dragover', dragOver);
+//         cell.addEventListener('dragleave', dragLeave);
+//         cell.addEventListener('drop', drop);
+//     })
+//     return setupBoard;
+// }
 
-function drawSetupShips(player) {
-    const setupShipsContainer = document.createElement('div');
-    setupShipsContainer.classList.add('setup-ships-container');
-    const setupShipsTitle = document.createElement('h3');
-    setupShipsTitle.textContent = 'place your ships:';
-    const setupShipsOptions = document.createElement('div');
-    setupShipsOptions.classList.add('setup-ships-options');
-    const startGame = document.createElement('button');
-    startGame.classList.add('setup-button-start');
-    startGame.textContent = 'TO BATTLE!';
-    const randomShips = document.createElement('button');
-    randomShips.classList.add('setup-button-random');
-    randomShips.textContent = 'randomize';
-    setupShipsOptions.append(startGame, randomShips);
-    const shipList = document.createElement('div');
-    for (let ship in shipTypes) {
-        shipList.appendChild(drawShip(shipTypes[ship]));
-    }
-    setupShipsContainer.append(setupShipsTitle, shipList, setupShipsOptions);
-    return setupShipsContainer;
-}
+// function drawSetupShips(player) {
+//     const setupShipsContainer = document.createElement('div');
+//     setupShipsContainer.classList.add('setup-ships-container');
+//     const setupShipsTitle = document.createElement('h3');
+//     setupShipsTitle.textContent = 'place your ships:';
+//     const setupShipsOptions = document.createElement('div');
+//     setupShipsOptions.classList.add('setup-ships-options');
+//     const startGame = document.createElement('button');
+//     startGame.classList.add('setup-button-start');
+//     startGame.textContent = 'TO BATTLE!';
+//     const randomShips = document.createElement('button');
+//     randomShips.classList.add('setup-button-random');
+//     randomShips.textContent = 'randomize';
+//     setupShipsOptions.append(startGame, randomShips);
+//     const shipList = document.createElement('div');
+//     for (let ship in shipTypes) {
+//         shipList.appendChild(drawShip(shipTypes[ship]));
+//     }
+//     setupShipsContainer.append(setupShipsTitle, shipList, setupShipsOptions);
+//     return setupShipsContainer;
+// }
 
-function drawShip(ship) {
-    const shipContainer = document.createElement('div');
-    shipContainer.classList.add('setup-ship');
-    const shipBox = document.createElement('div');
-    shipBox.id = ship.name;
-    shipBox.dataset.length = ship.length;
-    shipBox.classList.add('setup-ship-box');
-    for (let i = 0; i < ship.length; i++) {
-        const shipCell = document.createElement('div');
-        shipCell.classList.add('setup-ship-cell');
-        shipBox.appendChild(shipCell);
-    }
-    shipBox.draggable = true;
+// function drawShip(ship) {
+//     const shipContainer = document.createElement('div');
+//     shipContainer.classList.add('setup-ship');
+//     const shipBox = document.createElement('div');
+//     shipBox.id = ship.name;
+//     shipBox.dataset.length = ship.length;
+//     shipBox.classList.add('setup-ship-box');
+//     for (let i = 0; i < ship.length; i++) {
+//         const shipCell = document.createElement('div');
+//         shipCell.classList.add('setup-ship-cell');
+//         shipBox.appendChild(shipCell);
+//     }
+//     shipBox.draggable = true;
 
-    shipBox.addEventListener('dragstart', dragStart);
-    shipBox.addEventListener('dragend', dragEnd);
+//     shipBox.addEventListener('dragstart', dragStart);
+//     shipBox.addEventListener('dragend', dragEnd);
 
-    const shipName = document.createElement('p');
-    shipName.textContent = ship.name;
-    shipContainer.append(shipName, shipBox);
-    return shipContainer;
-    //
-    //
-    // HERE WE SHOULD MAKE UI FOR ROTATING SHIP
-    // ACTUAL IMPLEMENTATION IS A WHOLE OTHER BEAST
-    // DOUBLE CLICK TO ACTIVATE AND ATTEMPT TO ROTATE ABOUT EACH CELL?
-    //
-    //
-}
+//     const shipName = document.createElement('p');
+//     shipName.textContent = ship.name;
+//     shipContainer.append(shipName, shipBox);
+//     return shipContainer;
+//     //
+//     //
+//     // HERE WE SHOULD MAKE UI FOR ROTATING SHIP
+//     // ACTUAL IMPLEMENTATION IS A WHOLE OTHER BEAST
+//     // DOUBLE CLICK TO ACTIVATE AND ATTEMPT TO ROTATE ABOUT EACH CELL?
+//     //
+//     //
+// }
 
 
 
-function dragStart(event) {
-    event.dataTransfer.setData(`${event.target.id}`, true);
-    setTimeout(() => {
-        event.target.classList.add('setup-ship-hide');
-    }, 0);
-    if (event.target.parentElement.classList.contains('cell')) {
-        const cell = event.target.parentElement;
+// function dragStart(event) {
+//     console.log(event.target.home)
+//     event.parentElement = event.target.parentElement;
+//     console.log(event.parentElement)
+//     event.dataTransfer.setData(`${event.target.id}`, true);
+//     setTimeout(() => {
+//         event.target.classList.add('setup-ship-hide');
+//     }, 0);
+//     if (event.target.parentElement.classList.contains('cell')) {
+//         const cell = event.target.parentElement;
         
-        const player = cell.player;
-        const board = cell.board;
-        const row = parseInt(cell.dataset.row);
-        const col = parseInt(cell.dataset.col);
-        player.gameboard.removeShip([row, col]);
-    }
+//         const player = cell.player;
+//         const board = cell.board;
+//         const row = parseInt(cell.dataset.row);
+//         const col = parseInt(cell.dataset.col);
+//         player.gameboard.removeShip([row, col]);
+//         populateBoard(player, board);
+//     }
 
-    //
-    // MAYBE NEW FUNCTION DRAGEND?
-    // AND TRACK ORIGINAL CONTAINER SO WE CAN APPEND IT BACK ON 'NOT PLACED'
-}
+//     //
+//     // MAYBE NEW FUNCTION DRAGEND?
+//     // AND TRACK ORIGINAL CONTAINER SO WE CAN APPEND IT BACK ON 'NOT PLACED'
+// }
 
-function dragEnd(event){
-    console.log(event.target.parentElement)
-    setTimeout(() => {
-        getParent(event)
-    }, 500)
-    function getParent(event){
-        console.log(event.target.parentElement)
-        if (event.target.parentElement && event.target.parentElement.classList.contains('cell')) {
-            console.log('drag ended on cell')
-        } 
-        else console.log('drag ended NOT on cell')
-    }
+// function dragEnd(event){
+//     // console.log(event.target.parentElement)
+//     // setTimeout(() => {
+//     //     getParent(event)
+//     // }, 500)
+//     // function getParent(event){
+//     //     console.log(event.target.parentElement)
+//     //     if (event.target.parentElement && event.target.parentElement.classList.contains('cell')) {
+//     //         console.log('drag ended on cell')
+//     //     } 
+//     //     else console.log('drag ended NOT on cell')
+//     // }
     
-}
+// }
 
-function dragEnter(event) {
-    event.preventDefault();
-    const type = event.dataTransfer.types[0];
-    const player = event.target.player;
-    const board = event.target.board;
-    const row = parseInt(event.target.dataset.row);
-    const col = parseInt(event.target.dataset.col);
-    console.log(player)
-    const shipSquares = player.gameboard.checkValidPlacement(shipTypes[type].length, [row, col], 'horizontal')
-    shipSquares.squares = shipSquares.squares.filter(square => {
-        return player.gameboard.checkSquare(square[0], square[1]) !== undefined;
-    })
-    shipSquares.squares.forEach(square => {
-        const cell = board.querySelector(`[data-row='${square[0]}'][data-col='${square[1]}']`);
-        cell.classList.add('cell-drag-over');
-        if (shipSquares.isValid) cell.classList.add('cell-drag-valid');
-        else cell.classList.add('cell-drag-invalid');
-    })
-    event.target.classList.add('cell-drag-over');
-    //
-    //
-    // HERE WE SHOULD BE ABLE TO SEE THE BOARD UNDERNEATH A SHIP BOX
-    // IGNORING IT IN SOME WAY?
-    //
-    //
-}
+// function dragEnter(event) {
+//     event.preventDefault();
+//     console.log(event)
+//     console.log(event.target)
+//     const type = event.dataTransfer.types[0];
+//     const player = event.target.player;
+//     const board = event.target.board;
+//     const row = parseInt(event.target.dataset.row);
+//     const col = parseInt(event.target.dataset.col);
+//     const shipSquares = player.gameboard.checkValidPlacement(shipTypes[type].length, [row, col], 'horizontal')
+//     shipSquares.squares = shipSquares.squares.filter(square => {
+//         return player.gameboard.checkSquare(square[0], square[1]) !== undefined;
+//     })
+//     shipSquares.squares.forEach(square => {
+//         const cell = board.querySelector(`[data-row='${square[0]}'][data-col='${square[1]}']`);
+//         cell.classList.add('cell-drag-over');
+//         if (shipSquares.isValid) cell.classList.add('cell-drag-valid');
+//         else cell.classList.add('cell-drag-invalid');
+//     })
+//     event.target.classList.add('cell-drag-over');
+//     //
+//     //
+//     // HERE WE SHOULD BE ABLE TO SEE THE BOARD UNDERNEATH A SHIP BOX
+//     // IGNORING IT IN SOME WAY?
+//     //
+//     //
+// }
 
-function dragOver(event) {
-    event.preventDefault();
-}
+// function dragOver(event) {
+//     event.preventDefault();
+// }
 
-function dragLeave(event) {
-    const leftCells = document.querySelectorAll('.cell-drag-over');
-    leftCells.forEach(cell => {
-        cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
-    })
-}
+// function dragLeave(event) {
+//     const leftCells = document.querySelectorAll('.cell-drag-over');
+//     leftCells.forEach(cell => {
+//         cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
+//     })
+// }
 
-function drop(event) {
-    const leftCells = document.querySelectorAll('.cell-drag-over');
-    leftCells.forEach(cell => {
-        cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
-    })
+// function drop(event) {
+//     const leftCells = document.querySelectorAll('.cell-drag-over');
+//     leftCells.forEach(cell => {
+//         cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
+//     })
 
-    const type = event.dataTransfer.types[0];
-    const shipElement = document.getElementById(type);
+//     const type = event.dataTransfer.types[0];
+//     const shipElement = document.getElementById(type);
 
-    const player = event.target.player;
-    const board = event.target.board;
-    const row = event.target.dataset.row;
-    const col = event.target.dataset.col;
+//     const player = event.target.player;
+//     const board = event.target.board;
+//     const row = event.target.dataset.row;
+//     const col = event.target.dataset.col;
 
-    const shipSquares = player.gameboard.checkValidPlacement(shipTypes[type].length, [row, col], 'horizontal')
-    console.log(shipSquares)
-    if (shipSquares.isValid) {
-        event.target.appendChild(shipElement)
+//     const shipSquares = player.gameboard.checkValidPlacement(shipTypes[type].length, [row, col], 'horizontal')
+//     if (shipSquares.isValid) {
+//         event.target.appendChild(shipElement)
 
-        shipElement.classList.add('setup-ship-dropped');
-        player.gameboard.placeShip(shipElement.id, [row, col], 'horizontal')
-    }
-    shipElement.classList.remove('setup-ship-hide');
+//         shipElement.classList.add('setup-ship-dropped');
+//         player.gameboard.placeShip(shipElement.id, [row, col], 'horizontal')
+//     }
+//     shipElement.classList.remove('setup-ship-hide');
 
 
-    populateBoard(player, board)
-}
+//     populateBoard(player, board)
+// }
 
 //
-/// REMOVE SHIP FUNCTION ON PICKING UP PLACED SHIP
-// I.E., IF CLASS HAS DROPPED, THEN REMOVE THE SHIP
 //
+// FIGURE OUT HOW TO DO ROTATION
 //
-//
-// THEN FIGURE OUT HOW TO DO ROTATION
-//
-// THEN ADD IN GHOST SHIP SO IS OBVIOUS TO PLAYER WHAT SHIPS ARE LEFT TO PLACE AND WHAT HAS BEEN PLACED
+// ADD IN GHOST SHIP SO IS OBVIOUS TO PLAYER WHAT SHIPS ARE LEFT TO PLACE AND WHAT HAS BEEN PLACED
 ///
 //
 //

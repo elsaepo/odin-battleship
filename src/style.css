@@ -3,6 +3,7 @@
 :root {
     --header-height: 100px;
     --board-size: 320px;
+    --cell-size: 30px;
 
     --background-color: rgb(240, 240, 240);
     --cell-color: rgb(230, 230, 230);
@@ -104,8 +105,6 @@ button:active {
 }
 
 #game-container {
-    /* display: contents; */
-    /* width: fit-content; */
     display: flex;
     justify-content: center;
     align-content: center;
@@ -118,7 +117,6 @@ button:active {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* padding-top: 20px; */
     width: var(--board-size);
     height: calc(var(--board-size) + 25px);
     text-align: right;
@@ -132,6 +130,7 @@ button:active {
 
 .setup-ship {
     height: 40px;
+    position: relative;
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
@@ -148,7 +147,14 @@ button:active {
     display: inline-flex;
     gap: 2px;
     position: relative;
-    z-index: 100;
+    z-index: 20;
+    /* background-color: rgba(0,0,0,0) */
+}
+
+.setup-ship-vertical {
+    /* transform: rotate(90deg);
+    transform-origin: calc(var(--cell-size)/2) calc(var(--cell-size)/2); */
+    flex-direction: column;
 }
 
 .setup-ship-hide div {
@@ -162,9 +168,13 @@ button:active {
     top: -1px;
 }
 
+.setup-ship-dropped div {
+    /* border: 2px solid black; */
+}
+
 .setup-ship-cell {
-    width: 30.2px;
-    height: 30.2px;
+    width: var(--cell-size);
+    height: var(--cell-size);
     background-color: var(--cell-hover-color);
     border: 1px solid black;
 }
@@ -207,8 +217,8 @@ button:active {
 /* Player boards */
 .board {
     display: grid;
-    width: var(--board-size);
-    height: var(--board-size);
+    /* width: var(--board-size);
+    height: var(--board-size); */
     grid-template-rows: repeat(10, 1fr);
     grid-template-columns: repeat(10, 1fr);
     gap: 2px;
@@ -217,6 +227,8 @@ button:active {
 .cell {
     position: relative;
     cursor: crosshair;
+    height: var(--cell-size);
+    width: var(--cell-size);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -224,8 +236,23 @@ button:active {
     border: 1px solid var(--cell-border-color);
 }
 
+/* .cell::after {
+    content: "";
+    background: none;
+    border: 1px solid green;
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    left: 1px;
+    right: 1px;
+} */
+
+.cell-setup {
+    display: inline-block;
+}
+
 .cell-drag-over {
-    border-width: 2px;
+    z-index: 40;
 }
 
 .cell-drag-valid {
