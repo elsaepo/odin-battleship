@@ -24,6 +24,7 @@ newGame();
 function startGame(player1, player2) {
     game.newGame(player1, player2);
     drawGame();
+    
 }
 
 function newGame() {
@@ -36,7 +37,6 @@ function newGame() {
         if (newPlayer1.gameboard.placedShips.length === 5) {
             startGame(newPlayer1, newPlayer2);
         }
-
     });
 }
 
@@ -50,7 +50,6 @@ function drawGame() {
     const player2BoardContainer = drawBoardContainer(game.player2);
     populateBoard(game.player1, player1BoardContainer.querySelector('.board'));
     gameContainer.append(player1BoardContainer, player2BoardContainer);
-
 }
 
 function drawSetup(player) {
@@ -165,7 +164,6 @@ function styleAttackedCell(cell, defendingPlayerNumber, result, ship){
 function nextTurn() {
     const winner = game.checkGameOver();
     if (winner) {
-        alert(`${winner.name} wins`)
         return endGame(winner);
     };
     game.changeTurn();
@@ -177,8 +175,22 @@ function nextTurn() {
 function endGame(winner) {
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => cell.removeEventListener('click', listenForAttack, false));
-    // announce winner
-    // reveal both boards
+    gameContainer.appendChild(drawVictoryContainer(winner));
+}
+
+// Popup victory container
+function drawVictoryContainer(winner){
+    const loser = game.checkGameOver() === game.player1 ? game.player2 : game.player1;
+    const victoryContainer = document.createElement('div');
+    victoryContainer.classList.add('victory-container');
+    const victoryTitle = document.createElement('h2');
+    victoryTitle.textContent = winner.isAI ? 'TOTAL DEFEAT' : 'TOTAL VICTORY';
+    const winnerText = document.createElement('p');
+    winnerText.textContent = `${winner.name} has claimed domination!`;
+    const loserText = document.createElement('p');
+    loserText.textContent = `${loser.name}'s fleet is sunk.`
+    victoryContainer.append(victoryTitle, winnerText, loserText);
+    return victoryContainer;
 }
 
 // Draw the ships to the player's on-screen board so they can see their fleet

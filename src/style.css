@@ -6,6 +6,7 @@
     --cell-size: 30px;
 
     --background-color: rgb(240, 240, 240);
+    --background-color-transparent: rgba(240, 240, 240, 0.7);
     --cell-color: rgb(230, 230, 230);
     --cell-hover-color: rgb(200, 200, 200);
     --cell-border-color: rgb(70, 70, 70);
@@ -22,6 +23,7 @@
 
 :root.dark {
     --background-color: rgb(30, 30, 30);
+    --background-color-transparent: rgba(30, 30, 30, 0.7);
     --cell-color: rgb(40, 40, 40);
     --cell-hover-color: rgb(70, 70, 70);
     --cell-border-color: rgb(220, 220, 220);
@@ -302,7 +304,31 @@ button:active {
 
 .cell-sunk {
     background-color: var(--sunk-color);
+    transition: background-color 0.5s ease;
 }
+
+/* Victory container */
+.victory-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 318px;
+    text-align: center;
+    padding: 20px;
+    border: 3px solid var(--text-color-main);
+    background-color: var(--background-color-transparent);
+    backdrop-filter: blur(4px);
+}
+
+.victory-container h2 {
+    margin: 0;
+}
+
+.victory-container p {
+    margin: 6px;
+}
+
 
 /* Footer */
 footer {

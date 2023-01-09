@@ -100,7 +100,6 @@ function randomizeFleet() {
         const [row, col] = origin;
         const cell = board.querySelector(`[data-row='${row}'][data-col='${col}']`);
         cell.appendChild(shipElement);
-        console.log(shipElement.dataset)
     })
 }
 
