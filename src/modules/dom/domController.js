@@ -15,9 +15,10 @@ app.appendChild(header);
 app.appendChild(gameContainer);
 app.appendChild(footer);
 
+const newGameButton = header.querySelector('.new-game-button');
+newGameButton.addEventListener('click', newGame);
+
 const game = Game();
-// drawGame('Bob', false)
-// drawGame('bob', true)
 newGame();
 
 function startGame(player1, player2) {
@@ -119,6 +120,7 @@ function drawBoard(player) {
 }
 
 // Upon clicking a cell, attack the relevant square, if allowed
+// Pass information from the attack to styleAttackedCell function
 function listenForAttack(event) {
     const cell = event.target
     const defendingPlayerNumber = cell.dataset.player;
@@ -128,22 +130,35 @@ function listenForAttack(event) {
     if (game.currentPlayer !== attackingPlayer) return;
     const row = cell.dataset.row;
     const col = cell.dataset.col;
-    const result = attackingPlayer.attack(defendingPlayer, row, col)[0];
-    if (result === 'hit') cell.classList.add('cell-hit');
-    if (result === 'miss') cell.classList.add('cell-miss');
+    const [result, location, ship] = attackingPlayer.attack(defendingPlayer, row, col);
+    styleAttackedCell(cell, defendingPlayerNumber, result, ship);
     cell.removeEventListener('click', listenForAttack, false)
     nextTurn();
 }
 
-// Call an attack for the AI and modify the resulting attacked cell
+// Call an attack for the AI
 function callAIAttack(ai) {
     if (ai !== game.currentPlayer) return;
     const defendingPlayerNumber = game.defendingPlayer === game.player1 ? '1' : '2';
-    const [result, location] = ai.attack(game.defendingPlayer);
+    const [result, location, ship] = ai.attack(game.defendingPlayer);
     const cell = document.querySelector(`[data-player='${defendingPlayerNumber}'][data-row='${location[0]}'][data-col='${location[1]}']`)
-    if (result === 'hit') cell.classList.add('cell-hit');
-    if (result === 'miss') cell.classList.add('cell-miss');
+    styleAttackedCell(cell, defendingPlayerNumber, result, ship)
     nextTurn();
+}
+
+// Style attacked cell based on a hit or miss
+// If the ship is sunk, style each of the ship's cells with the .cell-sunk class
+function styleAttackedCell(cell, defendingPlayerNumber, result, ship){
+    if (result === 'hit'){
+        cell.classList.add('cell-hit');
+        if (ship.isSunk()){
+            ship.squares.forEach(square => {
+                const cell = document.querySelector(`[data-player='${defendingPlayerNumber}'][data-row='${square[0]}'][data-col='${square[1]}']`)
+                cell.classList.add('cell-sunk')
+            })
+        }
+    }
+    if (result === 'miss') cell.classList.add('cell-miss');
 }
 
 // Handle end-of-turn events

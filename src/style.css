@@ -122,6 +122,11 @@ button:active {
     text-align: right;
 }
 
+.setup-ships-header p {
+    margin: 0;
+    font-size: 0.8rem;
+}
+
 .setup-ship-shiplist {
     display: flex;
     flex-direction: column;
@@ -293,6 +298,10 @@ button:active {
     content: '●';
     opacity: 0.6;
     padding-bottom: 4px;
+}
+
+.cell-sunk {
+    background-color: var(--sunk-color);
 }
 
 /* Footer */

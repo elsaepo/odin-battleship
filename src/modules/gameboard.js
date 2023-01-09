@@ -119,12 +119,13 @@ function Gameboard() {
     // Returns an array - 'hit' or 'miss' depending on result, and the coordinates
     function receiveAttack(row, col) {
         if (this.checkSquare(row, col) === undefined) return "Invalid location";
-        if (this.board[row][col] === null) this.board[row][col] = 'miss';
+        const attackedShip = this.board[row][col];
+        if (attackedShip === null) this.board[row][col] = 'miss';
         else {
-            this.board[row][col].hit();
+            attackedShip.hit();
             this.board[row][col] = 'hit';
         }
-        return [this.board[row][col], [row, col]];
+        return [this.board[row][col], [row, col], attackedShip];
     }
     function checkAllShipsSunk() {
         return placedShips.every(ship => ship.isSunk());
