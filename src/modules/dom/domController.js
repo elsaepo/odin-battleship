@@ -24,7 +24,6 @@ newGame();
 function startGame(player1, player2) {
     game.newGame(player1, player2);
     drawGame();
-    
 }
 
 function newGame() {

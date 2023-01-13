@@ -110,7 +110,7 @@ function randomizeFleet() {
 function updateCellDif(event) {
     const x = event.offsetX;
     const y = event.offsetY;
-    const cellSize = event.target.firstChild.offsetWidth;
+    const cellSize = document.querySelector('.setup-ship-cell').offsetWidth;
     if (dragData.shipElement.dataset.alignment === 'horizontal') {
         dragData.rowDif = 0;
         dragData.colDif = Math.floor(x / (cellSize + 2));
@@ -176,6 +176,7 @@ function dragStart(event) {
     dragData.shipElement = event.target;
     dragData.shipHomeContainer = document.querySelector(`#${event.target.id}-home`);
     dragData.previousContainer = event.target.parentElement;
+    console.log(event)
     updateCellDif(event)
     if (dragData.shipElement.dataset.alignment === 'vertical') dragData.shipElement.classList.add('setup-ship-vertical');
     event.dataTransfer.setData(`${event.target.id}`, true);
