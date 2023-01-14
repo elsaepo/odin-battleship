@@ -28,17 +28,17 @@ test('can find each adjacent cell', () => {
 
 test('cannot find an attackable cell when looking off grid', () => {
     const cell = aiModule.getNextAttackableCell(player1, [4,9], 'right');
-    expect(cell).toBeFalsy;
+    expect(cell).toBe(false);
 })
 
-test('after a hit, finds an adjacent hittable cell', () => {
+test('after hit, finds an adjacent hittable cell', () => {
     player1.gameboard.placeShip('battleship', [2,4], 'horizontal');
     player1.gameboard.receiveAttack(2,4);
     const cell = aiModule.getNextAttackableCell(player1, [2,4], 'right');
     expect(cell).toEqual([2,5]);
 })
 
-test('after a hit, finds an attackable cell with a hit in the way', () => {
+test('after hit, finds an attackable cell with a hit in the way', () => {
     player1.gameboard.placeShip('battleship', [2,4], 'horizontal');
     player1.gameboard.receiveAttack(2,5);
     player1.gameboard.receiveAttack(2,4);
@@ -46,7 +46,7 @@ test('after a hit, finds an attackable cell with a hit in the way', () => {
     expect(cell).toEqual([2,6]);
 })
 
-test('after a hit, does not find an attackable cell with a miss in the way', () => {
+test('after hit, does not find an attackable cell with a miss in the way', () => {
     player1.gameboard.placeShip('battleship', [2,4], 'horizontal');
     player1.gameboard.receiveAttack(2,3);
     player1.gameboard.receiveAttack(2,4);
@@ -54,7 +54,7 @@ test('after a hit, does not find an attackable cell with a miss in the way', () 
     expect(cell).toBeFalsy;
 })
 
-test('after a hit, does not find an attackable cell with a sunk ship in the way', () => {
+test('after hit, does not find an attackable cell with a sunk ship in the way', () => {
     player1.gameboard.placeShip('patrol', [1,3], 'vertical');
     player1.gameboard.receiveAttack(1,3);
     player1.gameboard.receiveAttack(2,3);
@@ -86,23 +86,42 @@ test('check adjaceny within row', () => {
     expect(adjacency.distance).toBe(2);
 })
 
-test('if there is a hit registered adjacent, attack opposite cell',  () => {
+test('after hit, if there is a hit adjacent, attack opposite cell',  () => {
     player1.gameboard.placeShip('battleship', [2,4], 'horizontal');
     player1.gameboard.receiveAttack(2,4);
     aiModule.lastHitArray.push([2,4]);
     player1.gameboard.receiveAttack(2,5);
     aiModule.lastHitArray.push([2,5]);
-    const result = ai2.attack(player1);
-    expect(result[0]).toEqual([2,6]);
+    const result = aiModule.attack(player1);
+    expect(result).toEqual([2,6]);
 })
 
-test('if there is only one hit registered, get a random adjacent cell', () => {
+test('after hit, if there is a hit adjacent, look for next hit if no hits available opposite', () => {
+    player1.gameboard.placeShip('battleship', [2,4], 'horizontal');
+    player1.gameboard.receiveAttack(2,3);
+    player1.gameboard.receiveAttack(2,5);
+    aiModule.lastHitArray.push([2,5]);
+    player1.gameboard.receiveAttack(2,4);
+    aiModule.lastHitArray.push([2,4]);
+    const result = aiModule.attack(player1);
+    expect(result).toEqual([2,6]);
+})
+
+test('after hit, attack towards a cell that could possibly be part of the same ship', () => {
+    player1.gameboard.placeShip('battleship', [2,4], 'horizontal');
+    player1.gameboard.receiveAttack(2,7);
+    aiModule.lastHitArray.push([2,7]);
+    player1.gameboard.receiveAttack(2,5);
+    aiModule.lastHitArray.push([2,5]);
+    const result = aiModule.attack(player1);
+    expect(result).toEqual([2,6]);
+})
+
+test('after hit, if there are no other hits, get a random adjacent cell', () => {
     player1.gameboard.placeShip('battleship', [2,4], 'horizontal');
     player1.gameboard.receiveAttack(2,4);
     aiModule.lastHitArray.push([2,4]);
-    const result = ai2.attack(player1);
-    const cell = result[1];
-    expect(result[0]).toBe('string');
-    expect(Math.abs(cell[0] - 2)).toBeLessThanOrEqual(1);
-    expect(Math.abs(cell[1] - 4)).toBeLessThanOrEqual(1);
+    const result = aiModule.attack(player1);
+    expect(Math.abs(result[0] - 2)).toBeLessThanOrEqual(1);
+    expect(Math.abs(result[1] - 4)).toBeLessThanOrEqual(1);
 })

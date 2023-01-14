@@ -9,15 +9,18 @@ function Player(playerName, playerNumber) {
     const battleBot = aiLogic();
     function attack(enemy, row, col) {
         // If the attacking player is AI, we use the aiLogic module to get the attack coordinates
-        if (this.isAI) [row, col] = this.battleBot.attack(enemy);
-        if (this.isAI) console.log(`attacking ${row}, ${col}`)
+        if (this.isAI) {
+            if (this.battleBot.availableAttacks.length === 0) return 'No squares to attack';
+            [row, col] = this.battleBot.attack(enemy);
+        }
         // Get the result of the attack and update the aiLogic with it
         const result = enemy.gameboard.receiveAttack(row, col);
         if (this.isAI){
-            this.battleBot.lastResult = result[0];
-            this.battleBot.lastLocation = result[1];
+            // this.battleBot.lastResult = result[0];
+            // this.battleBot.lastLocation = result[1];
             if (result[0] === 'hit') this.battleBot.lastHitArray.push(result[1]);
             if (result[2] !== null) this.battleBot.lastShip = result[2];
+            this.battleBot.removeCellFromAvailableAttacks(result[1]);
         }
         return result;
     }
