@@ -20,7 +20,7 @@ function aiLogic() {
         if (this.lastHitArray.length === 0) {
             // this.confirmedOrientation = null;
             // this.direction = null;
-            let attackCoords = this.getRandomCell();
+            let attackCoords = this.getRandomCell(enemy);
             return attackCoords;
         }
         // Else, we find the next cell adjacent to the lastHit
@@ -35,6 +35,9 @@ function aiLogic() {
             let nextCell = this.getNextAttackableCell(enemy, lastHit, this.flipDirection(randomAdjacentHit.direction));
             if (nextCell === false){
                 nextCell = this.getNextAttackableCell(enemy, lastHit, randomAdjacentHit.direction);
+            };
+            while (nextCell === false){
+                nextCell = this.getNextAttackableCell(enemy, lastHit, this.possibleDirections[Math.floor(Math.random()*this.possibleDirections.length)]);
             };
             return nextCell;
         }
@@ -54,15 +57,21 @@ function aiLogic() {
             return typeof cell.cellResult !== 'string' && cell.cellResult !== undefined;
         });
         const cell = adjacentCellsToAttack[Math.floor(Math.random()* adjacentCellsToAttack.length)];
+        console.log(cell.adjacentCell)
         return cell.adjacentCell;
     }
-    function getRandomCell() {
+    function getRandomCell(enemy) {
         if (this.availableAttacks.length === 0) return 'No squares to attack';
         // Get row and col for a random AI attack from the availableAttacks array
         let arrayRow = Math.floor(Math.random() * this.availableAttacks.length);
         let arrayCol = Math.floor(Math.random() * this.availableAttacks[arrayRow].length);
-        let attackCoords = this.availableAttacks[arrayRow][arrayCol];
-        return attackCoords;
+        let cell = this.availableAttacks[arrayRow][arrayCol];
+        // If the selected cell has no adjacent cells to attack, get a different random cell
+        const adjacentCells = this.getAllAdjacentCells(enemy, cell);
+        if (adjacentCells.every(cell => typeof cell.cellResult !== 'object')){
+            return this.getRandomCell(enemy);
+        }
+        return cell;
     }
     // Remove a cell from the availableAttacks array
     // Called by player.js after making an attack
@@ -98,6 +107,7 @@ function aiLogic() {
         };
         return [row, col];
     }
+    // Given a cell, find the 4 possible adjacent cells and their direction
     function getAllAdjacentCells(enemy, cell) {
         return possibleDirections.map(direction => {
             const adjacentCell = this.getAdjacentCell(cell, direction);
@@ -207,18 +217,6 @@ function aiLogic() {
         flipDirection,
         checkIfShipIsSunk
     }
-}
-
-
-
-function getRandomDirection() {
-    const directions = [
-        'up',
-        'down',
-        'left',
-        'right'
-    ];
-    return directions[Math.floor(Math.random() * directions.length)];
 }
 
 function createAttackArray() {
