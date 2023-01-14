@@ -16,7 +16,7 @@ function Player(playerName, playerNumber) {
         if (this.isAI){
             this.battleBot.lastResult = result[0];
             this.battleBot.lastLocation = result[1];
-            if (result[0] === 'hit') this.battleBot.lastHit = result[1];
+            if (result[0] === 'hit') this.battleBot.lastHitArray.push(result[1]);
             if (result[2] !== null) this.battleBot.lastShip = result[2];
         }
         return result;
