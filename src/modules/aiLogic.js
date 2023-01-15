@@ -16,7 +16,7 @@ function aiLogic() {
         // If the last hit ship is sunk, or nothing has been hit yet, get a random cell
         // If the bot has missed more than 3 times in a row, give a 50% chance to cheat
         if (this.lastHitArray.length === 0) {
-            if (this.concurrentMisses > 5 && Math.random() > 0.65) {
+            if (this.concurrentMisses > 5 && Math.random() > 0.8) {
                 const enemyBoard = enemy.gameboard.board;
                 for (let row = 0; row < 10; row++) {
                     for (let col = 0; col < 10; col++) {
