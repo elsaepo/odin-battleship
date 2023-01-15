@@ -7,19 +7,28 @@ function aiLogic() {
     // So we have an array of recent hits of ships that are not yet sunk
     const lastHitArray = [];
     const possibleDirections = ['up', 'down', 'left', 'right'];
-    let lastLocation;
-    let lastResult;
-    let confirmedOrientation;
-    let direction;
+    let concurrentMisses = 0;
     function attack(enemy) {
-        if (this.lastHitArray.length > 0){
+        if (this.lastHitArray.length > 0) {
             this.checkIfShipIsSunk(enemy, this.lastHitArray[lastHitArray.length - 1]);
         };
         if (this.availableAttacks.length === 0) return 'No squares to attack';
         // If the last hit ship is sunk, or nothing has been hit yet, get a random cell
+        // If the bot has missed more than 3 times in a row, give a 50% chance to cheat
         if (this.lastHitArray.length === 0) {
-            // this.confirmedOrientation = null;
-            // this.direction = null;
+            if (this.concurrentMisses > 5 && Math.random() > 0.65) {
+                const enemyBoard = enemy.gameboard.board;
+                // console.log(enemyBoard)
+                for (let row = 0; row < 10; row++) {
+                    for (let col = 0; col < 10; col++) {
+                        const cell = enemy.gameboard.checkSquare(row, col);
+                        if (typeof cell === 'object' && cell !== null){
+                            console.log('cheating!')
+                            return [row, col];
+                        }
+                    }
+                }
+            }
             let attackCoords = this.getRandomCell(enemy);
             return attackCoords;
         }
@@ -30,23 +39,23 @@ function aiLogic() {
             return (cell.cellResult === 'hit' && this.checkIfShipIsSunk(enemy, cell.adjacentCell) === false);
         });
         // If there is a hit (or multiple) adjacent, attack in the opposite direction
-        if (adjacentHits.length > 0){
-            const randomAdjacentHit = adjacentHits[Math.floor(Math.random()*adjacentHits.length)];
+        if (adjacentHits.length > 0) {
+            const randomAdjacentHit = adjacentHits[Math.floor(Math.random() * adjacentHits.length)];
             let nextCell = this.getNextAttackableCell(enemy, lastHit, this.flipDirection(randomAdjacentHit.direction));
-            if (nextCell === false){
+            if (nextCell === false) {
                 nextCell = this.getNextAttackableCell(enemy, lastHit, randomAdjacentHit.direction);
             };
-            while (nextCell === false){
-                nextCell = this.getNextAttackableCell(enemy, lastHit, this.possibleDirections[Math.floor(Math.random()*this.possibleDirections.length)]);
+            while (nextCell === false) {
+                nextCell = this.getNextAttackableCell(enemy, lastHit, this.possibleDirections[Math.floor(Math.random() * this.possibleDirections.length)]);
             };
             return nextCell;
         }
         // Iterate backwards through all other hit cells for adjaceny to the lastHit cell
         // If adjacency is found, see if we can attack a cell in that direction
-        for (let i = this.lastHitArray.length - 2; i >= 0; i--){
+        for (let i = this.lastHitArray.length - 2; i >= 0; i--) {
             const cell = this.lastHitArray[i];
             const result = this.getAdjacency(lastHit, cell);
-            if (result){
+            if (result) {
                 let nextCell = this.getNextAttackableCell(enemy, lastHit, result.direction);
                 if (nextCell) return nextCell;
             }
@@ -56,7 +65,7 @@ function aiLogic() {
         const adjacentCellsToAttack = adjacentCells.filter(cell => {
             return typeof cell.cellResult !== 'string' && cell.cellResult !== undefined;
         });
-        const cell = adjacentCellsToAttack[Math.floor(Math.random()* adjacentCellsToAttack.length)];
+        const cell = adjacentCellsToAttack[Math.floor(Math.random() * adjacentCellsToAttack.length)];
         console.log(cell.adjacentCell)
         return cell.adjacentCell;
     }
@@ -68,18 +77,18 @@ function aiLogic() {
         let cell = this.availableAttacks[arrayRow][arrayCol];
         // If the selected cell has no adjacent cells to attack, get a different random cell
         const adjacentCells = this.getAllAdjacentCells(enemy, cell);
-        if (adjacentCells.every(cell => typeof cell.cellResult !== 'object')){
+        if (adjacentCells.every(cell => typeof cell.cellResult !== 'object')) {
             return this.getRandomCell(enemy);
         }
         return cell;
     }
     // Remove a cell from the availableAttacks array
     // Called by player.js after making an attack
-    function removeCellFromAvailableAttacks(cell){
-        for (let row = 0; row < this.availableAttacks.length; row++){
-            for (let col = 0; col < this.availableAttacks[row].length; col++){
+    function removeCellFromAvailableAttacks(cell) {
+        for (let row = 0; row < this.availableAttacks.length; row++) {
+            for (let col = 0; col < this.availableAttacks[row].length; col++) {
                 const square = this.availableAttacks[row][col];
-                if (cell[0] === square[0] && cell[1] === square[1]){
+                if (cell[0] === square[0] && cell[1] === square[1]) {
                     this.availableAttacks[row].splice(col, 1);
                     if (this.availableAttacks[row].length === 0) this.availableAttacks.splice(row, 1);
                     return;
@@ -164,8 +173,8 @@ function aiLogic() {
         }
         return false;
     }
-    function flipDirection(direction){
-        switch(direction){
+    function flipDirection(direction) {
+        switch (direction) {
             case 'up':
                 return 'down';
             case 'down':
@@ -203,10 +212,7 @@ function aiLogic() {
         lastShip,
         lastHitArray,
         possibleDirections,
-        lastLocation,
-        lastResult,
-        confirmedOrientation,
-        direction,
+        concurrentMisses,
         attack,
         getRandomCell,
         removeCellFromAvailableAttacks,

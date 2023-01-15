@@ -16,9 +16,11 @@ function Player(playerName, playerNumber) {
         // Get the result of the attack and update the aiLogic with it
         const result = enemy.gameboard.receiveAttack(row, col);
         if (this.isAI){
-            // this.battleBot.lastResult = result[0];
-            // this.battleBot.lastLocation = result[1];
-            if (result[0] === 'hit') this.battleBot.lastHitArray.push(result[1]);
+            if (result[0] === 'hit') {
+                this.battleBot.lastHitArray.push(result[1]);
+                this.battleBot.concurrentMisses = 0;
+            }
+            if (result[0] === 'miss') this.battleBot.concurrentMisses++;
             if (result[2] !== null) this.battleBot.lastShip = result[2];
             this.battleBot.removeCellFromAvailableAttacks(result[1]);
         }
