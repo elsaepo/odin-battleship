@@ -74,9 +74,25 @@ function drawShip(ship) {
     shipBox.draggable = true;
     shipBox.dataset.alignment = 'horizontal';
     shipBox.addEventListener('dragstart', dragStart);
+    shipBox.addEventListener('touchmove', dragStart);
     shipBox.addEventListener('dragend', dragEnd);
+    shipBox.addEventListener('touchend', dragEnd);
     shipBox.addEventListener('dblclick', rotateShip);
-
+    // As mobile browsers don't support double tap, we add a timer into the touchstart event listener
+    shipBox.lastClick = 0;
+    shipBox.addEventListener('touchstart', function(event) {
+        // Disable browser default zoom on double tap
+        event.preventDefault();
+        let date = new Date();
+        let time = date.getTime();
+        const timeBetweenTaps = 200;
+        if ((time - shipBox.lastClick) < timeBetweenTaps) {
+          rotateShip(event);
+          console.log("done");
+        }
+        shipBox.lastClick = time;
+    });
+    
     const shipName = document.createElement('p');
     if (ship.name === 'patrol') shipName.textContent = 'patrol boat';
     else shipName.textContent = ship.name;
@@ -176,7 +192,6 @@ function dragStart(event) {
     dragData.shipElement = event.target;
     dragData.shipHomeContainer = document.querySelector(`#${event.target.id}-home`);
     dragData.previousContainer = event.target.parentElement;
-    console.log(event)
     updateCellDif(event)
     if (dragData.shipElement.dataset.alignment === 'vertical') dragData.shipElement.classList.add('setup-ship-vertical');
     event.dataTransfer.setData(`${event.target.id}`, true);

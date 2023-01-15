@@ -18,7 +18,6 @@ function aiLogic() {
         if (this.lastHitArray.length === 0) {
             if (this.concurrentMisses > 5 && Math.random() > 0.65) {
                 const enemyBoard = enemy.gameboard.board;
-                // console.log(enemyBoard)
                 for (let row = 0; row < 10; row++) {
                     for (let col = 0; col < 10; col++) {
                         const cell = enemy.gameboard.checkSquare(row, col);
