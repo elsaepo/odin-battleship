@@ -59,6 +59,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 h1 {}
@@ -172,6 +173,16 @@ button:active {
 
 .setup-ship-dropped div {
     /* border: 2px solid black; */
+}
+
+.ghost-ship {
+    position: absolute;
+    z-index: 200;
+    opacity: 0.8;
+}
+
+.ghost-ship > .setup-ship-cell {
+    background-color: var(--cell-hover-color);
 }
 
 .setup-ship-cell {
