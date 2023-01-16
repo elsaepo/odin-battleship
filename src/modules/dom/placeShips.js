@@ -231,11 +231,14 @@ function dragEnter(event) {
     })
     shipSquares.squares.forEach(square => {
         const cell = board.querySelector(`[data-row='${square[0]}'][data-col='${square[1]}']`);
-        cell.classList.add('cell-drag-over');
-        if (shipSquares.isValid) cell.classList.add('cell-drag-valid');
-        else cell.classList.add('cell-drag-invalid');
+        // cell.classList.add('cell-drag-over');
+        const cellOverlay = document.createElement('div');
+        cellOverlay.classList.add('cell', 'cell-drag-over');
+        cell.appendChild(cellOverlay);
+        if (shipSquares.isValid) cellOverlay.classList.add('cell-drag-valid');
+        else cellOverlay.classList.add('cell-drag-invalid');
     })
-    event.target.classList.add('cell-drag-over');
+    // event.target.classList.add('cell-drag-over');
     //
     //
     // HERE WE SHOULD BE ABLE TO SEE THE BOARD UNDERNEATH A SHIP BOX
@@ -252,17 +255,14 @@ function dragOver(event) {
 function dragLeave(event) {
     const leftCells = document.querySelectorAll('.cell-drag-over');
     leftCells.forEach(cell => {
-        cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
+        // cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
+        cell.remove();
     })
 }
 
 // Handle drop events on cells using the rowDiff and colDiff dragData properties
 function drop(event) {
-    const leftCells = document.querySelectorAll('.cell-drag-over');
-    leftCells.forEach(cell => {
-        cell.classList.remove('cell-drag-over', 'cell-drag-valid', 'cell-drag-invalid');
-    })
-    // const type = event.dataTransfer.types[0];
+    dragLeave(event);
     const type = dragData.shipElement.id;
     const row = parseInt(event.target.dataset.row) - parseInt(dragData.rowDif)
     const col = parseInt(event.target.dataset.col) - parseInt(dragData.colDif)

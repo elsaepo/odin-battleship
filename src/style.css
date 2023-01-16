@@ -54,7 +54,6 @@ body {
 
 #app {
     padding: 0 5%;
-    /* width: 100vw; */
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -70,7 +69,6 @@ h3 {
 
 /* Header */
 header {
-    /* max-width: 100%; */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -155,12 +153,9 @@ button:active {
     gap: 2px;
     position: relative;
     z-index: 20;
-    /* background-color: rgba(0,0,0,0) */
 }
 
 .setup-ship-vertical {
-    /* transform: rotate(90deg);
-    transform-origin: calc(var(--cell-size)/2) calc(var(--cell-size)/2); */
     flex-direction: column;
 }
 
@@ -224,8 +219,6 @@ button:active {
 /* Player boards */
 .board {
     display: grid;
-    /* width: var(--board-size);
-    height: var(--board-size); */
     grid-template-rows: repeat(10, 1fr);
     grid-template-columns: repeat(10, 1fr);
     gap: 2px;
@@ -243,22 +236,14 @@ button:active {
     border: 1px solid var(--cell-border-color);
 }
 
-/* .cell::after {
-    content: "";
-    background: none;
-    border: 1px solid green;
-    position: absolute;
-    top: 1px;
-    bottom: 1px;
-    left: 1px;
-    right: 1px;
-} */
-
 .cell-setup {
     display: inline-block;
 }
 
 .cell-drag-over {
+    pointer-events: none;
+    position: absolute;
+    display: inline-block;
     z-index: 40;
 }
 
