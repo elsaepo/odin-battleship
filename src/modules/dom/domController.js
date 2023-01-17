@@ -55,40 +55,25 @@ function drawSetup(player) {
     clearContainer(gameContainer);
     const setupBoard = setup.drawSetupBoard(player, drawBoardContainer(player));
     const setupShips = setup.drawSetupShips();
-
     const ships = setupShips.querySelectorAll('.setup-ship-box');
-
     gameContainer.append(setupBoard, setupShips);
 }
 
-
-//
-// 
-// IF GAME CONTAINER HEIGHT IS BIGGER THAN 500PX (I.E., WRAPPED), ADJUST HEADER TO SUIT
-// THIS IS A VERY SCUFFED SOLUTION AND PORBABLY BREAKS SOMEWHERE
-//
-//
+// If the game container height if over 500px, we can see the flexbox is wrapped
+// We then adjust the header to match the width of the game boards - instead of being 100% wide
+// I'm sure there are better solutions.
 const gameSizeObserver = new ResizeObserver(entry => {
     if (entry[0].contentRect.height > 500) header.style.width = '320px';
     else header.style.width = `${entry[0].contentRect.width}px`;
-    // header.style.width = `${entry[0].contentRect.width}px`;
 })
-
 gameSizeObserver.observe(gameContainer);
-
-//
-//
-//
-//
 
 // Hold the information of the player's board - name, board and ships left
 function drawBoardContainer(player) {
     const boardContainer = document.createElement('div');
     boardContainer.classList.add('board-container');
     const playerName = document.createElement('h3');
-    // CAN TRIM THIS LATER PROBABLY
-    if (player) playerName.textContent = `${player.name}'s fleet`;
-    else playerName.textContent = 'your current fleet';
+    playerName.textContent = `${player.name}'s fleet`;
     const playerBoard = drawBoard(player);
     boardContainer.append(playerName, playerBoard);
     return boardContainer;
