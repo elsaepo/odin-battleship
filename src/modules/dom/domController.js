@@ -73,7 +73,8 @@ function drawBoardContainer(player) {
     const boardContainer = document.createElement('div');
     boardContainer.classList.add('board-container');
     const playerName = document.createElement('h3');
-    playerName.textContent = `${player.name}'s fleet`;
+    if (player.isAI) playerName.textContent = `${player.name}'s fleet`;
+    else playerName.textContent = `Your fleet`;
     const playerBoard = drawBoard(player);
     boardContainer.append(playerName, playerBoard);
     return boardContainer;
@@ -131,10 +132,10 @@ function callAIAttack(ai) {
 
 // Style attacked cell based on a hit or miss
 // If the ship is sunk, style each of the ship's cells with the .cell-sunk class
-function styleAttackedCell(cell, defendingPlayerNumber, result, ship){
-    if (result === 'hit'){
+function styleAttackedCell(cell, defendingPlayerNumber, result, ship) {
+    if (result === 'hit') {
         cell.classList.add('cell-hit');
-        if (ship.isSunk()){
+        if (ship.isSunk()) {
             ship.squares.forEach(square => {
                 const cell = document.querySelector(`[data-player='${defendingPlayerNumber}'][data-row='${square[0]}'][data-col='${square[1]}']`)
                 cell.classList.add('cell-sunk')
@@ -163,16 +164,24 @@ function endGame(winner) {
 }
 
 // Popup victory container
-function drawVictoryContainer(winner){
+function drawVictoryContainer(winner) {
     const loser = game.checkGameOver() === game.player1 ? game.player2 : game.player1;
     const victoryContainer = document.createElement('div');
     victoryContainer.classList.add('victory-container');
     const victoryTitle = document.createElement('h2');
-    victoryTitle.textContent = winner.isAI ? 'TOTAL DEFEAT' : 'TOTAL VICTORY';
     const winnerText = document.createElement('p');
-    winnerText.textContent = `${winner.name} has claimed domination!`;
     const loserText = document.createElement('p');
-    loserText.textContent = `${loser.name}'s fleet is sunk.`
+    if (winner.isAI) {
+        victoryTitle.classList.add('victory-defeat');
+        victoryTitle.textContent = 'TOTAL DEFEAT';
+        winnerText.textContent = `${winner.name} has claimed domination!`;
+        loserText.textContent = `Your fleet is sunk.`
+    } else {
+        victoryTitle.classList.add('victory-victory');
+        victoryTitle.textContent = 'TOTAL VICTORY';
+        winnerText.textContent = `You have claimed domination!`;
+        loserText.textContent = `${loser.name}'s fleet is sunk.`
+    }
     victoryContainer.append(victoryTitle, winnerText, loserText);
     return victoryContainer;
 }

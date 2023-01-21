@@ -313,10 +313,19 @@ button:active {
 
 .victory-container h2 {
     margin: 0;
+    text-shadow: 0 0 2px black, 0 0 4px black, 0 0 6px black;
 }
 
 .victory-container p {
     margin: 6px;
+}
+
+.victory-victory {
+    color: var(--miss-color);
+}
+
+.victory-defeat {
+    color: var(--sunk-color);
 }
 
 /* Footer */
