@@ -95,10 +95,7 @@ function drawShip(ship) {
             dragLeave(event);
         };
         // Add in a ghost ship
-        //
-        //
-        //
-        // PUT THIS INTO WEB VERSION TOO
+        // Potential to implement this into computer version to clean up UI
         const app = document.querySelector('#app');
         const prevBox = document.querySelector('.ghost-ship');
         if (prevBox) prevBox.remove();

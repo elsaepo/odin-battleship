@@ -88,15 +88,11 @@ function drawBoard(player) {
         for (let col = 0; col < 10; col++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            // CAN TRIM THIS LATER PROBABLY
             cell.dataset.player = player ? player.number : 0;
             cell.dataset.row = row;
             cell.dataset.col = col;
             board.appendChild(cell);
-            //
-            // MAY NEED TO REVISE
-            // NEED TO ADD EVENT LISTENERS ONLY FOR OPPOSING PLAYER'S BOARD
-            //
+            // Add event attack event listeneres only for AI's cells
             if (player && player.isAI) cell.addEventListener('click', listenForAttack, false);
         }
     }
